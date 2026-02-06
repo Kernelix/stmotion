@@ -1,6 +1,6 @@
 # ST Celestial Motion Studio Portfolio
 
-Премиальный одностраничный landing/portfolio для fullstack developer + designer с in‑page 3D, скролл‑монтажом и Hook Gym.
+Премиальный одностраничный landing/portfolio для fullstack developer + designer с in‑page 3D и скролл‑монтажом.
 
 ## Быстрый старт
 
@@ -25,7 +25,21 @@ pnpm dev
 - `src/content/services.js`
 - `src/content/values.js`
 - `src/content/contact.js`
-- `src/content/hooks.js`
+
+## Motion эффекты
+
+Использовано:
+
+- Плавные входы секций (fade‑in) — `src/components/Section.jsx`
+- Word/line‑reveal текста — `src/components/RevealText.jsx`
+- Clip‑reveal карточек/блоков — `src/components/RevealBlock.jsx`
+- Stagger + лёгкий depth для сеток — `src/components/RevealGrid.jsx`
+- Параллакс внутри секций — `src/components/Parallax.jsx`
+- Микро‑hover: lift/underline — `src/components/Button.jsx`, `src/components/Link.jsx`, `src/components/WorkCard.jsx`, `src/components/ContactBlock.jsx`
+- Scroll‑progress бар — `src/components/ScrollProgress.jsx`
+- 3D pointer‑parallax и scroll‑синхронизация — `src/three/ThreeScene.jsx`
+
+prefers‑reduced‑motion поддержан: анимации упрощаются или отключаются.
 
 ## Конструктор‑скролл
 
@@ -35,7 +49,7 @@ pnpm dev
 - `src/components/RevealText.jsx` — word/line‑reveal текста.
 - `src/components/RevealBlock.jsx` — clip‑reveal блоков.
 - `src/components/RevealGrid.jsx` — stagger + depth для сеток.
-- `src/pages/HomePage.jsx` — sticky‑сценарии (Services + Values).
+- `src/pages/HomePage.jsx` — сценарные блоки Services/Values в колонках.
 
 ## 3D сцена и синхронизация
 
@@ -43,6 +57,7 @@ pnpm dev
 - `src/three/sceneStages.js` — ключевые позы для секций и моделей.
 - `src/three/ModelScene.jsx` — GLB сцена с адаптивной подсветкой.
 - `src/three/Procedural*` — процедурный fallback.
+- `src/lib/scrollStore.js` — безопасный scroll‑progress без hijack.
 
 Режимы и флаги:
 
@@ -75,12 +90,3 @@ export BLENDER_PATH="/path/to/blender"
 ```
 
 Если GLB отсутствуют, сцена автоматически использует процедурные модели.
-
-## Hook Gym
-
-Реализованные хуки проходят тесты, заглушки падают специально:
-
-- Заглушки: `useStableCallback`, `useEventListener`, `useIntersectionObserver`, `useLocalStorageState`
-- Реализованные: `useMediaQuery`, `usePrefersReducedMotion`, `useDebouncedValue`, `useScrollProgress`
-
-Статусы отображаются в UI секции `Hook Gym`.
