@@ -20,6 +20,8 @@ import { scrollStore } from '@/lib/scrollStore'
 import { cx } from '@/lib/cx'
 
 const easing = [0.22, 1, 0.36, 1]
+const threeStack = ['Three.js', 'React Three Fiber', '@react-three/drei', 'GLSL basics', 'Blender assets', 'WebGL optimization']
+const designStack = ['Figma', 'After Effects', 'Spline', 'DaVinci Resolve', 'Typography systems', 'Motion direction']
 
 function FlowPanels({ kicker, title, description, cta, items, renderPanel }) {
   return (
@@ -220,17 +222,17 @@ export function HomePage() {
               <div className="space-y-6">
                 <RevealText
                   as="p"
-                  text="Fullstack разработчик + дизайнер"
+                  text="Fullstack разработчик (PHP/Go) + 3D motion frontend"
                   className="text-xs uppercase tracking-[0.36em] text-ink-500"
                 />
                 <h1 className="max-w-[24ch] font-display text-5xl font-semibold leading-[1.08] tracking-tight text-ink-900 [text-wrap:balance] sm:text-6xl md:text-7xl lg:max-w-[26ch]">
-                  <RevealText as="span" text="Премиальные цифровые" className="block" />
-                  <RevealText as="span" text="продукты с редакционной" className="block" delay={0.05} />
-                  <RevealText as="span" text="ясностью и иммерсивными" className="block" delay={0.1} />
+                  <RevealText as="span" text="Собираю веб-продукты," className="block" />
+                  <RevealText as="span" text="где надежный backend" className="block" delay={0.05} />
+                  <RevealText as="span" text="встречается с выразительным" className="block" delay={0.1} />
                   <RevealText
                     as="span"
-                    text="3D-системами."
-                    highlightWords={['3D-системами']}
+                    text="3D motion интерфейсом."
+                    highlightWords={['3D motion интерфейсом']}
                     highlightClassName="text-accent-500"
                     className="block"
                     delay={0.15}
@@ -239,16 +241,16 @@ export function HomePage() {
                 <RevealText
                   as="p"
                   lines={[
-                    'Проектирую и собираю высокопроизводительные цифровые продукты для амбициозных команд.',
-                    'От продуктового нарратива до фронтенд-архитектуры — каждая деталь настроена на доверие и скорость.'
+                    '4+ года коммерческого опыта: Go, PHP, React, микросервисы и SSR/SPA.',
+                    'Делаю архитектуру, интеграции и визуальную часть в одном контуре, чтобы релиз был быстрым и предсказуемым.'
                   ]}
                   className="text-base leading-relaxed text-ink-700"
                 />
               </div>
               <div className="flex flex-wrap items-center gap-4">
-                <Button href="#contact">Начать проект</Button>
+                <Button href="#contact">Связаться</Button>
                 <Button href="#work" variant="ghost">
-                  Посмотреть работы
+                  Смотреть опыт
                 </Button>
               </div>
               <RevealGrid className="sm:grid-cols-3">
@@ -257,46 +259,42 @@ export function HomePage() {
                     <span className="h-1.5 w-1.5 rounded-full bg-ink-900/25" />
                     <span>Фокус</span>
                   </div>
-                  <div className="mt-2 text-lg font-semibold text-ink-900">Бренд + продукт</div>
+                  <div className="mt-2 text-lg font-semibold text-ink-900">3D motion + fullstack</div>
                 </div>
                 <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-4">
                   <div className="flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-ink-500">
                     <span className="h-1.5 w-1.5 rounded-full bg-ink-900/25" />
                     <span>Стек</span>
                   </div>
-                  <div className="mt-2 text-lg font-semibold text-ink-900">React, WebGL, JS</div>
+                  <div className="mt-2 text-lg font-semibold text-ink-900">Go, PHP, React + Three.js/R3F</div>
                 </div>
                 <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-4">
                   <div className="flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-ink-500">
                     <span className="h-1.5 w-1.5 rounded-full bg-ink-900/25" />
                     <span>Исполнение</span>
                   </div>
-                  <div className="mt-2 text-lg font-semibold text-ink-900">Дизайн + разработка</div>
+                  <div className="mt-2 text-lg font-semibold text-ink-900">От API до production</div>
                 </div>
               </RevealGrid>
             </div>
             <div className="space-y-6">
               <RevealBlock className="rounded-3xl border border-ink-900/5 bg-white/75 p-6 backdrop-blur-md shadow-soft">
-                <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Заметки студии</div>
+                <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Кратко обо мне</div>
                 <p className="mt-4 text-lg font-semibold leading-snug text-ink-900">
-                  Редакционные сетки, скульптурная анимация и глубина реального времени без потери производительности.
+                  Fullstack-инженер из Казани. Проектирую архитектуру и добавляю 3D motion там, где он усиливает продукт, а не мешает ему.
                 </p>
                 <div className="mt-6 grid gap-3 text-xs uppercase tracking-[0.24em] text-ink-500">
                   <div className="flex items-center justify-between">
                     <span>Локация</span>
-                    <span className="text-ink-700">Удаленно / глобально</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Доступность</span>
-                    <span className="text-ink-700">Бронирование Q2 2026</span>
+                    <span className="text-ink-700">Казань / удаленно</span>
                   </div>
                 </div>
               </RevealBlock>
               <Parallax offset={60} className="rounded-3xl border border-ink-900/5 bg-white/70 p-6 backdrop-blur-md shadow-soft">
-                <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Фирменный подход</div>
+                <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Как я работаю</div>
                 <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink-900/85">
-                  <p>Продуктовая стратегия, UX-системы и интерактивный сторителлинг от начала до конца.</p>
-                  <p>Каждая сборка настроена на ясность, отзывчивость и премиальное тактильное ощущение.</p>
+                  <p>Беру ответственность за весь цикл: аналитика, архитектура, код, тесты, деплой и поддержка.</p>
+                  <p>3D и анимацию внедряю осознанно: от подготовки ассетов в Blender до оптимизированного рендера с контролем FPS и доступности.</p>
                 </div>
               </Parallax>
             </div>
@@ -311,23 +309,58 @@ export function HomePage() {
               <Caption>Обо мне</Caption>
               <RevealText
                 as="h2"
-                lines={['Разработчик, который проектирует,', 'дизайнер, который доводит до релиза.']}
+                lines={['Middle Fullstack Developer', 'с уклоном в 3D motion дизайн.']}
                 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl"
               />
             </div>
             <div className="space-y-4 text-sm leading-relaxed text-ink-700">
               <RevealBlock>
                 <p>
-                  Я работаю с фаундерами и продуктовыми командами, создавая премиальные цифровые впечатления. Моя
-                  практика соединяет продуктовую стратегию, визуальные системы и инженерию, чтобы сохранять
-                  дизайн-замысел от концепта до продакшена.
+                  Проектирую и реализую внутренние и клиентские сервисы на Go/PHP/JS: от архитектуры и API до
+                  интерфейса и релиза. Фокус — системы, которые помогают бизнесу быстрее принимать решения и меньше
+                  терять на ручных операциях.
                 </p>
               </RevealBlock>
               <RevealBlock delay={0.1}>
                 <p>
-                  Последние коллаборации — от ИИ-инструментов до культурных платформ и кураторской коммерции. Мне
-                  комфортно там, где пересекаются бренд, интерфейс и технологии реального времени.
+                  Реализовывал продуктовые контуры разного класса: промо-платформы с проверкой чеков, realtime-аукцион,
+                  legacy-логистику, а также систему транспортной диспетчеризации с нуля.
                 </p>
+              </RevealBlock>
+              <RevealBlock delay={0.14}>
+                <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-5">
+                  <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Бизнес-задачи, которые закрываю</div>
+                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-ink-700">
+                    <li>Автоматизация диспетчерской работы: статусы перевозок, задержки, таймлайн событий, контроль операций.</li>
+                    <li>Монетизация и продажи: аукционные ставки в реальном времени, подтверждение сделок, управление лотами.</li>
+                    <li>Промо-механики: личный кабинет, регистрация документов, валидация, дедупликация и модерация.</li>
+                    <li>Устойчивость legacy: безопасный рефакторинг, интеграции с внешними системами и сохранение бизнес-непрерывности.</li>
+                  </ul>
+                </div>
+              </RevealBlock>
+              <RevealBlock delay={0.15}>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="rounded-2xl border border-accent-300/40 bg-white/70 p-5 backdrop-blur-sm">
+                    <div className="text-xs uppercase tracking-[0.28em] text-ink-500">3D стек</div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {threeStack.map((item) => (
+                        <span key={item} className="rounded-full border border-ink-900/10 bg-paper-50 px-3 py-1 text-xs font-medium text-ink-700">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border border-ink-900/10 bg-white/70 p-5 backdrop-blur-sm">
+                    <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Дизайн-стек</div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {designStack.map((item) => (
+                        <span key={item} className="rounded-full border border-ink-900/10 bg-paper-50 px-3 py-1 text-xs font-medium text-ink-700">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </RevealBlock>
             </div>
           </div>
@@ -338,9 +371,9 @@ export function HomePage() {
         <Container>
           <FlowPanels
             kicker="Услуги"
-            title="Полный спектр продуктовой разработки."
-            description="Стратегия, дизайн и инженерия как единая система. Каждый этап замыкается в следующий."
-            cta={{ label: 'Запросить объем и сроки', href: '#contact' }}
+            title="Решаю задачи от API до 3D-интерфейса."
+            description="Берусь за продукт целиком или усиливаю конкретный блок: backend, frontend, motion и инфраструктуру."
+            cta={{ label: 'Обсудить задачу', href: '#contact' }}
             items={services}
             renderPanel={(service, index) => (
               <div className="flex h-full flex-col justify-between rounded-3xl border border-ink-900/10 bg-paper-50 p-8 shadow-soft">
@@ -353,7 +386,7 @@ export function HomePage() {
                 </div>
                 <div className="mt-8 flex items-center justify-between text-xs uppercase tracking-[0.28em] text-ink-500">
                   <span>Результат</span>
-                  <span>Точная сборка</span>
+                  <span>Рабочий релиз</span>
                 </div>
               </div>
             )}
@@ -369,12 +402,12 @@ export function HomePage() {
                 <Caption>Избранные работы</Caption>
                 <RevealText
                   as="h2"
-                  text="Иммерсивно, редакционно, с приоритетом производительности."
+                  text="Коммерческий опыт и типовые задачи, которые я закрываю."
                   className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl"
                 />
               </div>
               <Button href="#contact" variant="ghost">
-                Запросить кейс
+                Запросить детали
               </Button>
             </div>
             <Parallax offset={40} className="h-px w-full bg-gradient-to-r from-transparent via-ink-900/30 to-transparent" />
@@ -391,8 +424,8 @@ export function HomePage() {
         <Container>
           <FlowPanels
             kicker="Принципы"
-            title="Принципы, которые удерживают работу на премиальном уровне."
-            description="Ясность, производительность и тактильная детализация ведут каждое решение."
+            title="Подход, который снижает риски и ускоряет delivery."
+            description="Фокус на прозрачности процесса, контроле качества и устойчивой архитектуре."
             items={values}
             renderPanel={(value, index) => (
               <div className="flex h-full flex-col justify-between rounded-3xl border border-ink-900/10 bg-paper-50 p-8 shadow-soft">
@@ -403,7 +436,7 @@ export function HomePage() {
                   <h3 className="text-2xl font-semibold text-ink-900">{value.title}</h3>
                   <p className="text-sm leading-relaxed text-ink-700">{value.description}</p>
                 </div>
-                <div className="mt-8 text-xs uppercase tracking-[0.28em] text-ink-500">Всегда в работе</div>
+                <div className="mt-8 text-xs uppercase tracking-[0.28em] text-ink-500">Применяю в каждом проекте</div>
               </div>
             )}
           />
@@ -417,11 +450,11 @@ export function HomePage() {
               <Caption>Контакты</Caption>
               <RevealText
                 as="h2"
-                text="Давайте выпустим то, чем можно гордиться."
+                text="Открыт к сильным fullstack и 3D motion задачам."
                 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl"
               />
               <p className="text-sm leading-relaxed text-ink-700">
-                Пришлите бриф, сроки или просто скажите привет. Отвечаю в течение 48 часов.
+                Напиши в Telegram или на почту. Отвечаю быстро, можно сразу с ТЗ и сроками.
               </p>
             </div>
             <RevealGrid className="md:grid-cols-3">
@@ -432,7 +465,7 @@ export function HomePage() {
             <Divider />
             <div className="flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.28em] text-ink-500">
               <span>Работаю по всему миру</span>
-              <span>© 2026 ST Celestial Motion Studio</span>
+              <span>© 2026 ST Celestial</span>
             </div>
           </div>
         </Container>

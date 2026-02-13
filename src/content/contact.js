@@ -1,17 +1,17 @@
 export const contacts = [
   {
     label: 'Telegram',
-    value: '@yourhandle',
-    href: 'https://t.me/yourhandle'
+    value: '@hikiyer',
+    href: 'https://t.me/hikiyer'
   },
   {
-    label: 'GitHub',
-    value: 'github.com/yourhandle',
-    href: 'https://github.com/yourhandle'
+    label: 'Телефон',
+    value: '+7 (917) 288-89-69',
+    href: 'tel:+79172888969'
   },
   {
     label: 'Почта',
-    value: 'hello@yourstudio.com',
-    href: 'mailto:hello@yourstudio.com'
+    value: 'stas.tutov.89@mail.ru',
+    href: 'mailto:stas.tutov.89@mail.ru'
   }
 ]

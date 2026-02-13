@@ -87,7 +87,7 @@ export function Header() {
           </nav>
           <div className="hidden md:flex">
             <Button href="#contact" variant="accent">
-              Записаться на звонок
+              Обсудить проект
             </Button>
           </div>
           <button
