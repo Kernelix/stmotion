@@ -210,8 +210,11 @@ function StickyPanels({ kicker, title, description, cta, items, renderPanel, get
 export function HomePage() {
   return (
     <main>
-      <Section id="hero" className="pt-24 md:pt-30">
-        <Container>
+      <Section id="hero" className="relative isolate pt-24 md:pt-30">
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(520px_380px_at_12%_18%,rgba(246,246,242,0.95),rgba(246,246,242,0.7)_58%,rgba(246,246,242,0)_78%),radial-gradient(520px_380px_at_86%_26%,rgba(246,246,242,0.95),rgba(246,246,242,0.65)_60%,rgba(246,246,242,0)_82%)] [mask-image:linear-gradient(to_bottom,black,black_70%,transparent)]" />
+        </div>
+        <Container className="relative z-10">
           <div className="grid gap-16 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-10">
               <div className="space-y-6">
@@ -220,13 +223,19 @@ export function HomePage() {
                   text="Fullstack разработчик + дизайнер"
                   className="text-xs uppercase tracking-[0.36em] text-ink-500"
                 />
-                <RevealText
-                  as="h1"
-                  text="Премиальные цифровые продукты с редакционной ясностью и иммерсивными 3D-системами."
-                  highlightWords={['3D']}
-                  highlightClassName="text-accent-500"
-                  className="font-display text-5xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-6xl md:text-7xl"
-                />
+                <h1 className="max-w-[24ch] font-display text-5xl font-semibold leading-[1.08] tracking-tight text-ink-900 [text-wrap:balance] sm:text-6xl md:text-7xl lg:max-w-[26ch]">
+                  <RevealText as="span" text="Премиальные цифровые" className="block" />
+                  <RevealText as="span" text="продукты с редакционной" className="block" delay={0.05} />
+                  <RevealText as="span" text="ясностью и иммерсивными" className="block" delay={0.1} />
+                  <RevealText
+                    as="span"
+                    text="3D-системами."
+                    highlightWords={['3D-системами']}
+                    highlightClassName="text-accent-500"
+                    className="block"
+                    delay={0.15}
+                  />
+                </h1>
                 <RevealText
                   as="p"
                   lines={[
@@ -244,39 +253,48 @@ export function HomePage() {
               </div>
               <RevealGrid className="sm:grid-cols-3">
                 <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-4">
-                  <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Фокус</div>
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-ink-500">
+                    <span className="h-1.5 w-1.5 rounded-full bg-ink-900/25" />
+                    <span>Фокус</span>
+                  </div>
                   <div className="mt-2 text-lg font-semibold text-ink-900">Бренд + продукт</div>
                 </div>
                 <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-4">
-                  <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Стек</div>
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-ink-500">
+                    <span className="h-1.5 w-1.5 rounded-full bg-ink-900/25" />
+                    <span>Стек</span>
+                  </div>
                   <div className="mt-2 text-lg font-semibold text-ink-900">React, WebGL, JS</div>
                 </div>
                 <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-4">
-                  <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Исполнение</div>
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-ink-500">
+                    <span className="h-1.5 w-1.5 rounded-full bg-ink-900/25" />
+                    <span>Исполнение</span>
+                  </div>
                   <div className="mt-2 text-lg font-semibold text-ink-900">Дизайн + разработка</div>
                 </div>
               </RevealGrid>
             </div>
             <div className="space-y-6">
-              <RevealBlock className="rounded-3xl border border-ink-900/10 bg-paper-50 p-6 shadow-soft">
-                <div className="text-xs uppercase tracking-[0.32em] text-ink-500">Заметки студии</div>
-                <p className="mt-4 text-lg font-semibold text-ink-900">
+              <RevealBlock className="rounded-3xl border border-ink-900/5 bg-white/75 p-6 backdrop-blur-md shadow-soft">
+                <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Заметки студии</div>
+                <p className="mt-4 text-lg font-semibold leading-snug text-ink-900">
                   Редакционные сетки, скульптурная анимация и глубина реального времени без потери производительности.
                 </p>
-                <div className="mt-6 grid gap-4 text-xs uppercase tracking-[0.28em] text-ink-500">
+                <div className="mt-6 grid gap-3 text-xs uppercase tracking-[0.24em] text-ink-500">
                   <div className="flex items-center justify-between">
                     <span>Локация</span>
-                    <span>Удаленно / глобально</span>
+                    <span className="text-ink-700">Удаленно / глобально</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Доступность</span>
-                    <span>Бронирование Q2 2026</span>
+                    <span className="text-ink-700">Бронирование Q2 2026</span>
                   </div>
                 </div>
               </RevealBlock>
-              <Parallax offset={60} className="rounded-3xl border border-ink-900/10 bg-paper-50/80 p-6">
-                <div className="text-xs uppercase tracking-[0.32em] text-ink-500">Фирменный подход</div>
-                <div className="mt-4 space-y-3 text-sm leading-relaxed text-ink-700">
+              <Parallax offset={60} className="rounded-3xl border border-ink-900/5 bg-white/70 p-6 backdrop-blur-md shadow-soft">
+                <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Фирменный подход</div>
+                <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink-900/85">
                   <p>Продуктовая стратегия, UX-системы и интерактивный сторителлинг от начала до конца.</p>
                   <p>Каждая сборка настроена на ясность, отзывчивость и премиальное тактильное ощущение.</p>
                 </div>

@@ -9,6 +9,10 @@
   --paper-100: #efefe9;
   --accent-500: #2b7cff;
   --accent-300: #9cc0ff;
+  --accent: 224 58 58;
+  --accent-hover: 205 47 47;
+  --accent-strong: 186 40 40;
+  --accent-soft: 248 214 214;
 }
 
 * {

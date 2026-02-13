@@ -5,19 +5,25 @@
 ## Быстрый старт
 
 ```bash
-pnpm i
-pnpm models:build
+cd stmotion
+pnpm install
 pnpm dev
+```
+
+Рабочая команда локального запуска:
+
+```bash
+cd stmotion && pnpm install && pnpm dev
 ```
 
 Команды:
 
-- `pnpm dev`
-- `pnpm build`
-- `pnpm preview`
-- `pnpm test`
-- `pnpm lint`
-- `pnpm models:build`
+- `pnpm dev` — локальный dev-сервер
+- `pnpm build` — production build
+- `pnpm preview` — локальный предпросмотр build
+- `pnpm test` — тесты
+- `pnpm lint` — линтинг
+- `pnpm models:build` — сборка GLB через Blender (опционально)
 
 ## Где менять контент
 

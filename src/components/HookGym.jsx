@@ -34,7 +34,7 @@ function DemoDebouncedValue() {
     <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-4 text-sm text-ink-700">
       <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Поле с дебаунсом</div>
       <input
-        className="mt-3 w-full rounded-xl border border-ink-900/10 bg-white px-3 py-2 text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+        className="mt-3 w-full rounded-xl border border-ink-900/10 bg-white px-3 py-2 text-sm outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent))]"
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder="Введите текст"

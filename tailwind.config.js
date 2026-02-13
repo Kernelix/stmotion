@@ -17,6 +17,11 @@ const config = {
           500: '#2b7cff',
           400: '#4b91ff',
           300: '#9cc0ff'
+        },
+        'accent-red': {
+          500: 'rgb(var(--accent) / <alpha-value>)',
+          400: 'rgb(var(--accent-hover) / <alpha-value>)',
+          200: 'rgb(var(--accent-soft) / <alpha-value>)'
         }
       },
       spacing: {
