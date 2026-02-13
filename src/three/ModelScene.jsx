@@ -13,23 +13,24 @@ import {
 } from 'three'
 import { modelStages } from '@/three/sceneStages'
 import { getPose } from '@/three/poseUtils'
+import { modelPaths } from '@/three/modelPaths.js'
 
 const models = [
   {
     key: 'monolith',
-    url: '/models/model-1-monolith.glb',
+    url: modelPaths.monolith,
     accent: '#2b7cff',
     stages: modelStages.monolith
   },
   {
     key: 'ribbon',
-    url: '/models/model-2-ribbon.glb',
+    url: modelPaths.ribbon,
     accent: '#4b91ff',
     stages: modelStages.ribbon
   },
   {
     key: 'orb',
-    url: '/models/model-3-orbcluster.glb',
+    url: modelPaths.orb,
     accent: '#9cc0ff',
     stages: modelStages.orb
   }
