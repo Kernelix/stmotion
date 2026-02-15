@@ -11,6 +11,7 @@ import { RevealText } from '@/components/RevealText'
 import { RevealBlock } from '@/components/RevealBlock'
 import { RevealGrid } from '@/components/RevealGrid'
 import { Parallax } from '@/components/Parallax'
+import { ScrambleText } from '@/components/ScrambleText'
 import { projects } from '@/content/projects'
 import { services } from '@/content/services'
 import { values } from '@/content/values'
@@ -23,16 +24,20 @@ const easing = [0.22, 1, 0.36, 1]
 const threeStack = ['Three.js', 'React Three Fiber', '@react-three/drei', 'GLSL basics', 'Blender assets', 'WebGL optimization']
 const designStack = ['Figma', 'After Effects', 'Spline', 'DaVinci Resolve', 'Typography systems', 'Motion direction']
 
-function FlowPanels({ kicker, title, description, cta, items, renderPanel }) {
+function FlowPanels({ kicker, title, description, cta, items, renderPanel, effectsEnabled = true }) {
   return (
     <div className="grid gap-12 lg:grid-cols-[0.55fr_1fr]">
       <div className="space-y-6 lg:sticky lg:top-24 self-start">
         <div className="space-y-3">
           <Caption>{kicker}</Caption>
-          <RevealText
+          <ScrambleText
             as="h2"
             text={title}
             className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl"
+            enabled={effectsEnabled}
+            trigger="view"
+            duration={760}
+            viewThreshold={0.35}
           />
           <p className="text-sm leading-relaxed text-ink-700">{description}</p>
         </div>
@@ -209,7 +214,7 @@ function StickyPanels({ kicker, title, description, cta, items, renderPanel, get
   )
 }
 
-export function HomePage() {
+export function HomePage({ effectsEnabled = true }) {
   return (
     <main>
       <Section id="hero" className="relative isolate pt-24 md:pt-30">
@@ -220,22 +225,50 @@ export function HomePage() {
           <div className="grid gap-16 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-10">
               <div className="space-y-6">
-                <RevealText
+                <ScrambleText
                   as="p"
-                  text="Fullstack разработчик (PHP/Go) + 3D motion frontend"
+                  text="FULLSTACK РАЗРАБОТЧИК + 3D MOTION FRONTEND"
                   className="text-xs uppercase tracking-[0.36em] text-ink-500"
+                  enabled={effectsEnabled}
+                  trigger="mount"
+                  duration={820}
                 />
                 <h1 className="max-w-[24ch] font-display text-5xl font-semibold leading-[1.08] tracking-tight text-ink-900 [text-wrap:balance] sm:text-6xl md:text-7xl lg:max-w-[26ch]">
-                  <RevealText as="span" text="Собираю веб-продукты," className="block" />
-                  <RevealText as="span" text="где надежный backend" className="block" delay={0.05} />
-                  <RevealText as="span" text="встречается с выразительным" className="block" delay={0.1} />
-                  <RevealText
+                  <ScrambleText
+                    as="span"
+                    text="Собираю веб-продукты,"
+                    className="block"
+                    enabled={effectsEnabled}
+                    trigger="mount"
+                    duration={620}
+                    startDelay={0}
+                  />
+                  <ScrambleText
+                    as="span"
+                    text="где надежный backend"
+                    className="block"
+                    enabled={effectsEnabled}
+                    trigger="mount"
+                    duration={620}
+                    startDelay={70}
+                  />
+                  <ScrambleText
+                    as="span"
+                    text="встречается с выразительным"
+                    className="block"
+                    enabled={effectsEnabled}
+                    trigger="mount"
+                    duration={620}
+                    startDelay={140}
+                  />
+                  <ScrambleText
                     as="span"
                     text="3D motion интерфейсом."
-                    highlightWords={['3D motion интерфейсом']}
-                    highlightClassName="text-accent-500"
-                    className="block"
-                    delay={0.15}
+                    className="block text-accent-500"
+                    enabled={effectsEnabled}
+                    trigger="mount"
+                    duration={640}
+                    startDelay={210}
                   />
                 </h1>
                 <RevealText
@@ -307,10 +340,14 @@ export function HomePage() {
           <div className="grid gap-12 lg:grid-cols-[0.6fr_1fr]">
             <div className="space-y-4">
               <Caption>Обо мне</Caption>
-              <RevealText
+              <ScrambleText
                 as="h2"
-                lines={['Middle Fullstack Developer', 'с уклоном в 3D motion дизайн.']}
+                text="Middle Fullstack Developer с уклоном в 3D motion дизайн."
                 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl"
+                enabled={effectsEnabled}
+                trigger="view"
+                duration={780}
+                viewThreshold={0.35}
               />
             </div>
             <div className="space-y-4 text-sm leading-relaxed text-ink-700">
@@ -374,6 +411,7 @@ export function HomePage() {
             title="Решаю задачи от API до 3D-интерфейса."
             description="Берусь за продукт целиком или усиливаю конкретный блок: backend, frontend, motion и инфраструктуру."
             cta={{ label: 'Обсудить задачу', href: '#contact' }}
+            effectsEnabled={effectsEnabled}
             items={services}
             renderPanel={(service, index) => (
               <div className="flex h-full flex-col justify-between rounded-3xl border border-ink-900/10 bg-paper-50 p-8 shadow-soft">
@@ -400,10 +438,14 @@ export function HomePage() {
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div className="space-y-3">
                 <Caption>Избранные работы</Caption>
-                <RevealText
+                <ScrambleText
                   as="h2"
                   text="Коммерческий опыт и типовые задачи, которые я закрываю."
                   className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl"
+                  enabled={effectsEnabled}
+                  trigger="view"
+                  duration={860}
+                  viewThreshold={0.35}
                 />
               </div>
               <Button href="#contact" variant="ghost">
@@ -426,6 +468,7 @@ export function HomePage() {
             kicker="Принципы"
             title="Подход, который снижает риски и ускоряет delivery."
             description="Фокус на прозрачности процесса, контроле качества и устойчивой архитектуре."
+            effectsEnabled={effectsEnabled}
             items={values}
             renderPanel={(value, index) => (
               <div className="flex h-full flex-col justify-between rounded-3xl border border-ink-900/10 bg-paper-50 p-8 shadow-soft">
@@ -448,10 +491,14 @@ export function HomePage() {
           <div className="space-y-8">
             <div className="space-y-3">
               <Caption>Контакты</Caption>
-              <RevealText
+              <ScrambleText
                 as="h2"
                 text="Открыт к сильным fullstack и 3D motion задачам."
                 className="font-display text-3xl font-semibold tracking-tight text-ink-900 md:text-4xl"
+                enabled={effectsEnabled}
+                trigger="view"
+                duration={760}
+                viewThreshold={0.35}
               />
               <p className="text-sm leading-relaxed text-ink-700">
                 Напиши в Telegram или на почту. Отвечаю быстро, можно сразу с ТЗ и сроками.

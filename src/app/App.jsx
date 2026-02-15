@@ -1,9 +1,36 @@
+import { useEffect, useState } from 'react'
 import { Header } from '@/components/Header'
 import { ScrollProgress } from '@/components/ScrollProgress'
+import { CustomCursor } from '@/components/CustomCursor'
+import { SitePreloader } from '@/components/SitePreloader'
 import { HomePage } from '@/pages/HomePage'
 import { ThreeScene } from '@/three/ThreeScene'
 
 export default function App() {
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    let timer = null
+    const finish = () => {
+      timer = window.setTimeout(() => {
+        setReady(true)
+      }, 720)
+    }
+
+    if (document.readyState === 'complete') {
+      finish()
+    } else {
+      window.addEventListener('load', finish, { once: true })
+    }
+
+    return () => {
+      if (timer !== null) {
+        window.clearTimeout(timer)
+      }
+      window.removeEventListener('load', finish)
+    }
+  }, [])
+
   return (
     <div className="relative min-h-[100svh] overflow-x-hidden text-ink-900">
       <ThreeScene className="fixed inset-0 z-0 pointer-events-none" />
@@ -12,9 +39,11 @@ export default function App() {
         <div className="absolute inset-0 opacity-[0.18] [background-size:220px_220px] [background-image:linear-gradient(to_right,rgba(21,21,21,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(21,21,21,0.05)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_82%)]" />
       </div>
       <div className="relative z-10">
+        <SitePreloader visible={!ready} />
+        <CustomCursor />
         <ScrollProgress />
         <Header />
-        <HomePage />
+        <HomePage effectsEnabled={ready} />
       </div>
     </div>
   )
