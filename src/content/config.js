@@ -1,8 +1,8 @@
 import { modelPathList } from '@/three/modelPaths.js'
 
 export const threeConfig = {
-  useModels: false,
-  autoDetectModels: true,
+  useModels: true,
+  autoDetectModels: false,
   forceMode: null,
   debug: false,
   modelPaths: modelPathList

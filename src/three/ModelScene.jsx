@@ -1,14 +1,15 @@
 import { useGLTF } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
+import { clone as skeletonClone } from 'three/examples/jsm/utils/SkeletonUtils.js'
 import {
+  AnimationMixer,
   Box3,
   Color,
   EdgesGeometry,
   LineBasicMaterial,
   LineSegments,
   MathUtils,
-  MeshPhysicalMaterial,
   Vector3
 } from 'three'
 import { modelStages } from '@/three/sceneStages'
@@ -27,66 +28,127 @@ const models = [
     key: 'ribbon',
     url: modelPaths.ribbon,
     accent: '#4b91ff',
-    stages: modelStages.ribbon
+    stages: modelStages.ribbon,
+    animationHint: 'open',
+    scaleBoost: 3.2,
+    positionBoost: [0, 0.55, 3.2]
   },
   {
     key: 'orb',
     url: modelPaths.orb,
     accent: '#9cc0ff',
-    stages: modelStages.orb
+    stages: modelStages.orb,
+    scaleBoost: 1
   }
 ]
 
-function InteractiveModel({ url, accent, stages, scrollRef, pointerRef, intensity, layoutTuning, modelKey, motionTuning }) {
+const isRobotAuxMesh = (mesh) => {
+  const nodeName = (mesh.name || '').toLowerCase()
+  const geometryName = (mesh.geometry?.name || '').toLowerCase()
+  const materialNames = (Array.isArray(mesh.material) ? mesh.material : [mesh.material])
+    .map((material) => (material?.name || '').toLowerCase())
+    .join(' ')
+  return (
+    nodeName.includes('plane_material_001') ||
+    geometryName.includes('plane_material_001') ||
+    nodeName.includes('circle_material') ||
+    geometryName.includes('circle_material') ||
+    materialNames.includes('plane_material_001') ||
+    materialNames.includes('circle_material')
+  )
+}
+
+function InteractiveModel({
+  url,
+  accent,
+  stages,
+  animationHint,
+  scaleBoost = 1,
+  positionBoost = [0, 0, 0],
+  scrollRef,
+  pointerRef,
+  intensity,
+  layoutTuning,
+  modelKey,
+  motionTuning
+}) {
   const { invalidate } = useThree()
-  const { scene } = useGLTF(url)
+  const { scene, animations } = useGLTF(url)
   const group = useRef(null)
   const materials = useRef([])
   const lineMaterials = useRef([])
+  const edgeGeometries = useRef([])
+  const mixerRef = useRef(null)
   const baseScale = useRef(1)
   const prevProgress = useRef(0)
   const scrollImpulse = useRef(0)
 
   const accentColor = useMemo(() => new Color(accent), [accent])
-  const baseColor = useMemo(() => new Color('#f6f5f0'), [])
-  const clone = useMemo(() => scene.clone(true), [scene])
+  const clone = useMemo(() => skeletonClone(scene), [scene])
 
   useEffect(() => {
     materials.current = []
     lineMaterials.current = []
+    edgeGeometries.current = []
+    if (mixerRef.current) {
+      mixerRef.current.stopAllAction()
+      mixerRef.current.uncacheRoot(clone)
+      mixerRef.current = null
+    }
     clone.traverse((child) => {
       if (!child.isMesh) {
         return
       }
+      if (modelKey === 'ribbon' && isRobotAuxMesh(child)) {
+        child.visible = false
+        return
+      }
       child.castShadow = true
       child.receiveShadow = true
-      const material = new MeshPhysicalMaterial({
-        color: baseColor,
-        roughness: 0.24,
-        metalness: 0.86,
-        clearcoat: 0.8,
-        clearcoatRoughness: 0.2
-      })
-      child.material = material
-      materials.current.push({
-        material,
-        baseEmissive: new Color('#050505'),
-        roughness: material.roughness,
-        metalness: material.metalness,
-        color: material.color.clone()
+      const sourceMaterials = Array.isArray(child.material) ? child.material : [child.material]
+      const clonedMaterials = sourceMaterials.map((material) => (material?.isMaterial ? material.clone() : material))
+      child.material = Array.isArray(child.material) ? clonedMaterials : clonedMaterials[0]
+
+      clonedMaterials.forEach((material) => {
+        if (!material?.isMaterial) {
+          return
+        }
+        materials.current.push({
+          material,
+          color: material.color ? material.color.clone() : null,
+          emissive: material.emissive ? material.emissive.clone() : null,
+          emissiveIntensity: typeof material.emissiveIntensity === 'number' ? material.emissiveIntensity : null,
+          roughness: typeof material.roughness === 'number' ? material.roughness : null,
+          metalness: typeof material.metalness === 'number' ? material.metalness : null,
+          clearcoat: typeof material.clearcoat === 'number' ? material.clearcoat : null,
+          clearcoatRoughness: typeof material.clearcoatRoughness === 'number' ? material.clearcoatRoughness : null
+        })
       })
 
-      const edges = new EdgesGeometry(child.geometry, 35)
-      const lineMaterial = new LineBasicMaterial({
-        color: accent,
-        transparent: true,
-        opacity: 0.18
-      })
-      const lines = new LineSegments(edges, lineMaterial)
-      lines.scale.setScalar(1.001)
-      child.add(lines)
-      lineMaterials.current.push(lineMaterial)
+      if (modelKey !== 'ribbon') {
+        const edges = new EdgesGeometry(child.geometry, 35)
+        const lineMaterial = new LineBasicMaterial({
+          color: accent,
+          transparent: true,
+          opacity: 0.18
+        })
+        const lines = new LineSegments(edges, lineMaterial)
+        lines.scale.setScalar(1.001)
+        child.add(lines)
+        edgeGeometries.current.push(edges)
+        lineMaterials.current.push(lineMaterial)
+      }
     })
+
+    if (animations.length) {
+      const mixer = new AnimationMixer(clone)
+      const normalizedHint = animationHint?.toLowerCase()
+      const selectedClip =
+        animations.find((clip) => normalizedHint && (clip.name || '').toLowerCase().includes(normalizedHint)) ?? animations[0]
+      mixer.clipAction(selectedClip).reset().play()
+      mixerRef.current = mixer
+    }
+
     const box = new Box3().setFromObject(clone)
     const size = new Vector3()
     const center = new Vector3()
@@ -96,11 +158,29 @@ function InteractiveModel({ url, accent, stages, scrollRef, pointerRef, intensit
     baseScale.current = 2.1 / max
     clone.position.sub(center)
     invalidate()
-  }, [clone])
+    return () => {
+      if (mixerRef.current) {
+        mixerRef.current.stopAllAction()
+        mixerRef.current.uncacheRoot(clone)
+        mixerRef.current = null
+      }
+      lineMaterials.current.forEach((material) => material.dispose())
+      edgeGeometries.current.forEach((geometry) => geometry.dispose())
+      materials.current.forEach(({ material }) => material.dispose?.())
+      lineMaterials.current = []
+      edgeGeometries.current = []
+      materials.current = []
+    }
+  }, [animations, clone, accent, invalidate])
 
   useFrame((state, delta) => {
     if (!group.current) {
       return
+    }
+
+    if (mixerRef.current && intensity > 0) {
+      mixerRef.current.update(delta)
+      state.invalidate()
     }
 
     const { index, t, progress } = scrollRef.current
@@ -120,13 +200,19 @@ function InteractiveModel({ url, accent, stages, scrollRef, pointerRef, intensit
     const bob = Math.sin(elapsed * (motionTuning?.bobFreq ?? 0)) * (motionTuning?.bobAmp ?? 0)
     const float = (progress - 0.5) * 0.14 * intensity + bob
     const xFactor = layoutTuning?.xFactor ?? 1
+    const xOffset = layoutTuning?.xOffset ?? 0
+    const sectionProgress = index + t
+    const bottomXBias =
+      typeof layoutTuning?.bottomXBias === 'number'
+        ? MathUtils.smoothstep(sectionProgress, 3.6, 5) * layoutTuning.bottomXBias
+        : 0
     const yOffset = layoutTuning?.yOffset ?? 0
     const zOffset = layoutTuning?.zOffset ?? 0
-    const perModel = layoutTuning?.perModel?.[modelKey] ?? { x: 0, y: 0, z: 0 }
+    const perModel = layoutTuning?.perModel?.[modelKey] ?? { x: 0, y: 0, z: 0, scale: 1 }
 
-    const poseX = pose.position[0] * xFactor + perModel.x
-    const poseY = pose.position[1] + yOffset + perModel.y
-    const poseZ = pose.position[2] + zOffset + perModel.z
+    const poseX = pose.position[0] * xFactor + xOffset + bottomXBias + perModel.x + (positionBoost[0] ?? 0)
+    const poseY = pose.position[1] + yOffset + perModel.y + (positionBoost[1] ?? 0)
+    const poseZ = pose.position[2] + zOffset + perModel.z + (positionBoost[2] ?? 0)
 
     const targetPosition = [poseX, poseY + float + scrollShiftY, poseZ]
     const targetRotation = [
@@ -134,7 +220,8 @@ function InteractiveModel({ url, accent, stages, scrollRef, pointerRef, intensit
       pose.rotation[1] + pointerX * 0.22 * intensity + scrollShiftRotY,
       pose.rotation[2]
     ]
-    const targetScale = baseScale.current * pose.scale
+    const targetScale =
+      baseScale.current * pose.scale * scaleBoost * (layoutTuning?.scaleFactor ?? 1) * (perModel.scale ?? 1)
 
     if (intensity === 0) {
       group.current.position.set(targetPosition[0], targetPosition[1], targetPosition[2])
@@ -154,15 +241,31 @@ function InteractiveModel({ url, accent, stages, scrollRef, pointerRef, intensit
     }
 
     const energy = pose.energy * intensity
-    materials.current.forEach(({ material, baseEmissive, roughness, metalness, color }) => {
-      material.color.copy(color).lerp(accentColor, energy * 0.2)
-      material.emissive.copy(baseEmissive).lerp(accentColor, 0.4 + energy * 0.6)
-      material.emissiveIntensity = 0.35 + energy * 1.6
-      material.roughness = MathUtils.lerp(roughness, 0.16, energy)
-      material.metalness = MathUtils.lerp(metalness, 0.95, energy)
-      material.clearcoat = 0.7 + energy * 0.25
-      material.clearcoatRoughness = 0.25 - energy * 0.12
-    })
+    materials.current.forEach(
+      ({ material, color, emissive, emissiveIntensity, roughness, metalness, clearcoat, clearcoatRoughness }) => {
+        if (color && material.color) {
+          material.color.copy(color).lerp(accentColor, energy * 0.18)
+        }
+        if (emissive && material.emissive) {
+          material.emissive.copy(emissive).lerp(accentColor, energy * 0.2)
+          if (typeof emissiveIntensity === 'number') {
+            material.emissiveIntensity = emissiveIntensity + energy * 0.5
+          }
+        }
+        if (typeof roughness === 'number') {
+          material.roughness = MathUtils.lerp(roughness, Math.max(0.06, roughness * 0.7), energy)
+        }
+        if (typeof metalness === 'number') {
+          material.metalness = MathUtils.lerp(metalness, Math.min(1, metalness + 0.14), energy)
+        }
+        if (typeof clearcoat === 'number') {
+          material.clearcoat = MathUtils.lerp(clearcoat, Math.min(1, clearcoat + 0.2), energy)
+        }
+        if (typeof clearcoatRoughness === 'number') {
+          material.clearcoatRoughness = MathUtils.lerp(clearcoatRoughness, Math.max(0.02, clearcoatRoughness * 0.7), energy)
+        }
+      }
+    )
     lineMaterials.current.forEach((lineMaterial) => {
       lineMaterial.opacity = 0.18 + energy * 0.5
     })
@@ -194,27 +297,41 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning 
   const isNarrowMobile = useMediaQuery('(max-width: 390px)')
   const layoutTuning = isNarrowMobile
     ? {
-        xFactor: 0.72,
-        yOffset: 0.02,
-        zOffset: 0.04,
+        xFactor: 0.2,
+        xOffset: -0.12,
+        bottomXBias: -0.22,
+        yOffset: 0.08,
+        zOffset: 0.44,
+        scaleFactor: 0.504,
         perModel: {
-          monolith: { x: -0.1, y: 0.02, z: 0.12 },
-          ribbon: { x: 0, y: 0.01, z: -0.14 },
-          orb: { x: 0.1, y: 0.02, z: 0.1 }
+          monolith: { x: -0.004, y: 0.03, z: 0.16, scale: 0.84 },
+          ribbon: { x: 0, y: 0.11, z: 0.76, scale: 4.4355584 },
+          orb: { x: 0.004, y: 0.04, z: 0.16, scale: 0.78 }
         }
       }
     : isMobile
       ? {
-          xFactor: 0.78,
-          yOffset: 0.01,
-          zOffset: 0.02,
+          xFactor: 0.24,
+          xOffset: -0.1,
+          bottomXBias: -0.18,
+          yOffset: 0.06,
+          zOffset: 0.34,
+          scaleFactor: 0.56,
           perModel: {
-            monolith: { x: -0.06, y: 0.01, z: 0.08 },
-            ribbon: { x: 0, y: 0.01, z: -0.1 },
-            orb: { x: 0.06, y: 0.01, z: 0.07 }
+            monolith: { x: -0.008, y: 0.03, z: 0.12, scale: 0.86 },
+            ribbon: { x: 0, y: 0.1, z: 0.66, scale: 4.6964736 },
+            orb: { x: 0.008, y: 0.03, z: 0.12, scale: 0.82 }
           }
         }
-      : { xFactor: 1, yOffset: 0, zOffset: 0 }
+      : {
+          xFactor: 1,
+          yOffset: 0,
+          zOffset: 0,
+          scaleFactor: 1,
+          perModel: {
+            ribbon: { x: 0, y: 0, z: 0, scale: 3.0492 }
+          }
+        }
 
   useEffect(() => {
     models.forEach((model) => {
@@ -231,6 +348,9 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning 
           url={model.url}
           accent={model.accent}
           stages={model.stages}
+          animationHint={model.animationHint}
+          scaleBoost={model.scaleBoost}
+          positionBoost={model.positionBoost}
           scrollRef={scrollRef}
           pointerRef={pointerRef}
           intensity={intensity}

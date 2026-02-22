@@ -23,7 +23,6 @@ cd stmotion && pnpm install && pnpm dev
 - `pnpm preview` — локальный предпросмотр build
 - `pnpm test` — тесты
 - `pnpm lint` — линтинг
-- `pnpm models:build` — сборка GLB через Blender (опционально)
 
 ## Где менять контент
 
@@ -67,32 +66,12 @@ prefers‑reduced‑motion поддержан: анимации упрощают
 
 Режимы и флаги:
 
-- `src/content/config.js` — авто‑детект GLB, режимы, пути.
+- `src/content/config.js` — настройки рендера и пути моделей.
 
-## GLB модели и Blender
+## GLB модели
 
 Модели по умолчанию лежат в `public/models`:
 
-- `public/models/model-1-monolith.glb`
-- `public/models/model-2-ribbon.glb`
-- `public/models/model-3-orbcluster.glb`
-
-Генерация через Blender (headless):
-
-```bash
-pnpm models:build
-```
-
-Скрипты:
-
-- `tools/blender/monolith.py`
-- `tools/blender/ribbon.py`
-- `tools/blender/orb-cluster.py`
-
-Blender должен быть доступен в PATH. При необходимости:
-
-```bash
-export BLENDER_PATH="/path/to/blender"
-```
-
-Если GLB отсутствуют, сцена автоматически использует процедурные модели.
+- `public/models/model-1-plasma.glb`
+- `public/models/model-2-robot.glb`
+- `public/models/model-3-space-voyage.glb`

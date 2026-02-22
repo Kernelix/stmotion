@@ -114,12 +114,18 @@ function SceneRig({ children, scrollRef, pointerRef, intensity, mobileTuning, mo
     const pointerY = (pointer.y + idleY) * (motionTuning?.pointerBoost ?? 1)
     const tiltX = pointerY * 0.08 * intensity
     const tiltY = pointerX * 0.12 * intensity
+    const sectionProgress = index + t
+    const xOffset = mobileTuning?.xOffset ?? 0
+    const bottomXBias =
+      typeof mobileTuning?.bottomXBias === 'number'
+        ? MathUtils.smoothstep(sectionProgress, 3.6, 5) * mobileTuning.bottomXBias
+        : 0
     const zOffset = mobileTuning?.zOffset ?? 0
     const scaleFactor = mobileTuning?.scaleFactor ?? 1
     const targetRotationX = pose.rotation[0] + tiltX
     const targetRotationY = pose.rotation[1] + tiltY + scrollShiftRotY
     const targetRotationZ = pose.rotation[2]
-    const targetPosition = [pose.position[0], pose.position[1] + scrollShiftY, pose.position[2] + zOffset]
+    const targetPosition = [pose.position[0] + xOffset + bottomXBias, pose.position[1] + scrollShiftY, pose.position[2] + zOffset]
     const targetScale = pose.scale * scaleFactor
     let needsUpdate = false
 
@@ -221,12 +227,12 @@ export function ThreeScene({ className }) {
   const pointerRef = usePointer(intensity > 0, requestFrame)
   const allowModels = threeConfig.useModels || threeConfig.autoDetectModels
   const modelsAvailable = useModelAvailability(allowModels, threeConfig.modelPaths)
-  const useModels = (threeConfig.useModels && modelsAvailable) || (threeConfig.autoDetectModels && modelsAvailable)
+  const useModels = threeConfig.useModels ? true : threeConfig.autoDetectModels && modelsAvailable
   const mobileTuning = isNarrowMobile
-    ? { scaleFactor: 0.5, zOffset: 0.62 }
+    ? { scaleFactor: 0.5, zOffset: 0.62, xOffset: -0.14, bottomXBias: -0.2 }
     : isMobile
-      ? { scaleFactor: 0.54, zOffset: 0.52 }
-      : { scaleFactor: 1, zOffset: 0 }
+      ? { scaleFactor: 0.54, zOffset: 0.52, xOffset: -0.12, bottomXBias: -0.16 }
+      : { scaleFactor: 1, zOffset: 0, xOffset: 0, bottomXBias: 0 }
   const motionTuning = isNarrowMobile
     ? {
         pointerBoost: 1.65,

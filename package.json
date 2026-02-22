@@ -8,8 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "lint": "eslint .",
-    "models:build": "node tools/blender/build-models.mjs"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",
