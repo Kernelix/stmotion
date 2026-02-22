@@ -228,6 +228,8 @@ export function ThreeScene({ className }) {
   const allowModels = threeConfig.useModels || threeConfig.autoDetectModels
   const modelsAvailable = useModelAvailability(allowModels, threeConfig.modelPaths)
   const useModels = threeConfig.useModels ? true : threeConfig.autoDetectModels && modelsAvailable
+  const baseUrl = import.meta.env.BASE_URL || '/'
+  const studioEnvPath = `${baseUrl}hdri/studio_small_03_1k.hdr`
   const mobileTuning = isNarrowMobile
     ? { scaleFactor: 0.5, zOffset: 0.62, xOffset: -0.14, bottomXBias: -0.2 }
     : isMobile
@@ -281,11 +283,7 @@ export function ThreeScene({ className }) {
         <color attach="background" args={['#f6f6f2']} />
         <fog attach="fog" args={['#f6f6f2', 6, 12]} />
         <SceneLights intensity={intensity} pointerRef={pointerRef} motionTuning={motionTuning} />
-        {mode === 'full' ? (
-          <Suspense fallback={null}>
-            <Environment preset="studio" />
-          </Suspense>
-        ) : null}
+        {mode === 'full' ? <Environment files={studioEnvPath} /> : null}
         <SceneRig
           scrollRef={scrollRef}
           pointerRef={pointerRef}

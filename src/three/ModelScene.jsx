@@ -242,7 +242,16 @@ function InteractiveModel({
 
     const energy = pose.energy * intensity
     materials.current.forEach(
-      ({ material, color, emissive, emissiveIntensity, roughness, metalness, clearcoat, clearcoatRoughness }) => {
+      ({
+        material,
+        color,
+        emissive,
+        emissiveIntensity,
+        roughness,
+        metalness,
+        clearcoat,
+        clearcoatRoughness
+      }) => {
         if (color && material.color) {
           material.color.copy(color).lerp(accentColor, energy * 0.18)
         }
