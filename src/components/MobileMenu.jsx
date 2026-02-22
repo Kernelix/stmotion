@@ -7,10 +7,10 @@ export function MobileMenu({ open, onClose }) {
   return (
     <div
       className={cx(
-        'fixed inset-0 z-40 flex flex-col bg-paper-50/95 backdrop-blur-sm transition-opacity duration-300',
+        'mobile-menu fixed inset-0 z-40 flex flex-col bg-paper-50/95 backdrop-blur-sm transition-opacity duration-300',
         open ? 'opacity-100' : 'pointer-events-none opacity-0'
       )}
-      style={{ height: '100svh', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ height: '100svh', minHeight: '100svh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
       role="dialog"
       aria-modal="true"
       aria-hidden={!open}

@@ -31,8 +31,27 @@ export default function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const ua = navigator.userAgent || ''
+    const params = new URLSearchParams(window.location.search)
+    const forceTg = params.get('tg') === '1'
+    const isTelegram =
+      /Telegram/i.test(ua) ||
+      /t\.me|telegram\.org/i.test(document.referrer) ||
+      Boolean(window.Telegram?.WebApp)
+    const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+
+    document.body.classList.toggle('is-ios-webview', isIOS)
+    document.body.classList.toggle('is-ios-tgwebview', isIOS && (forceTg || isTelegram))
+
+    return () => {
+      document.body.classList.remove('is-ios-webview')
+      document.body.classList.remove('is-ios-tgwebview')
+    }
+  }, [])
+
   return (
-    <div className="relative min-h-[100svh] overflow-x-hidden text-ink-900">
+    <div className="app-shell relative min-h-[100svh] overflow-x-hidden text-ink-900">
       <ThreeScene className="fixed inset-0 z-0 pointer-events-none" />
       <div className="pointer-events-none fixed inset-0 z-[1]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_rgba(246,246,242,0.2))]" />

@@ -223,17 +223,17 @@ export function HomePage({ effectsEnabled = true }) {
         </div>
         <Container className="relative z-10">
           <div className="grid gap-16 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="space-y-10">
+            <div className="min-w-0 space-y-10">
               <div className="space-y-6">
                 <ScrambleText
                   as="p"
                   text="FULLSTACK РАЗРАБОТЧИК + 3D MOTION FRONTEND"
-                  className="text-xs uppercase tracking-[0.36em] text-ink-500"
+                  className="hero-kicker text-xs uppercase tracking-[0.36em] text-ink-500"
                   enabled={effectsEnabled}
                   trigger="mount"
                   duration={820}
                 />
-                <h1 className="max-w-[24ch] font-display text-5xl font-semibold leading-[1.08] tracking-tight text-ink-900 [text-wrap:balance] sm:text-6xl md:text-7xl lg:max-w-[26ch]">
+                <h1 className="hero-title font-display font-semibold text-ink-900">
                   <ScrambleText
                     as="span"
                     text="Собираю веб-продукты,"
@@ -310,7 +310,7 @@ export function HomePage({ effectsEnabled = true }) {
                 </div>
               </RevealGrid>
             </div>
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
               <RevealBlock className="rounded-3xl border border-ink-900/5 bg-white/75 p-6 backdrop-blur-md shadow-soft">
                 <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Кратко обо мне</div>
                 <p className="mt-4 text-lg font-semibold leading-snug text-ink-900">

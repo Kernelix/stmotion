@@ -67,7 +67,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-ink-900/5 bg-paper-50/90 backdrop-blur-sm">
+      <header className="site-header sticky top-0 z-30 border-b border-ink-900/5 bg-paper-50/90 backdrop-blur-sm">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-5 md:px-10">
           <div className="flex items-center gap-3">
             <span className="text-xs uppercase tracking-[0.4em] text-ink-500">ST Celestial</span>
