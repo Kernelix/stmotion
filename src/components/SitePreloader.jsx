@@ -1,9 +1,21 @@
 import { useEffect, useState } from 'react'
 import { usePrefersReducedMotion } from '@/hooks'
 
-export function SitePreloader({ visible }) {
+export function SitePreloader({ visible, progress = 0 }) {
   const reducedMotion = usePrefersReducedMotion()
   const [mounted, setMounted] = useState(visible)
+  const percent = Math.max(0, Math.min(100, Math.round(progress)))
+  const ringRadius = 42
+  const ringCircumference = 2 * Math.PI * ringRadius
+  const ringOffset = ringCircumference * (1 - percent / 100)
+  const status =
+    percent < 25
+      ? 'Инициализация сцены'
+      : percent < 60
+        ? 'Загрузка ассетов'
+        : percent < 95
+          ? 'Сборка визуала'
+          : 'Финальный штрих'
 
   useEffect(() => {
     let timeoutId = null
@@ -38,18 +50,43 @@ export function SitePreloader({ visible }) {
 
   return (
     <div
-      className={`fixed inset-0 z-[90] flex items-center justify-center bg-paper-50/96 backdrop-blur-sm transition-opacity duration-300 ${
+      className={`site-preloader fixed inset-0 z-[90] flex items-center justify-center transition-opacity duration-300 ${
         visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       aria-hidden={!visible}
     >
-      <div className="flex flex-col items-center gap-5">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-[rgb(var(--accent))]" />
-          <span className="h-2 w-2 animate-pulse rounded-full bg-ink-900/70 [animation-delay:120ms]" />
-          <span className="h-2 w-2 animate-pulse rounded-full bg-[rgb(var(--accent))] [animation-delay:240ms]" />
+      <div className="site-preloader-bg" />
+      <div className="site-preloader-noise" />
+      <div className="site-preloader-shell">
+        <div className="site-preloader-ring-wrap" aria-hidden>
+          <div className="site-preloader-ring-glow" />
+          <svg className="site-preloader-ring" viewBox="0 0 120 120">
+            <circle className="site-preloader-ring-track" cx="60" cy="60" r={ringRadius} />
+            <circle
+              className="site-preloader-ring-progress"
+              cx="60"
+              cy="60"
+              r={ringRadius}
+              style={{
+                strokeDasharray: ringCircumference,
+                strokeDashoffset: ringOffset
+              }}
+            />
+          </svg>
+          <div className="site-preloader-percent" aria-live="polite">
+            {String(percent).padStart(2, '0')}%
+          </div>
         </div>
-        <div className="text-xs uppercase tracking-[0.34em] text-ink-500">ST Celestial</div>
+        <div className="site-preloader-copy">
+          <div className="site-preloader-title">ST Celestial</div>
+          <div className="site-preloader-status">{status}</div>
+          <div className="site-preloader-track">
+            <div className="site-preloader-fill" style={{ width: `${percent}%` }}>
+              {!reducedMotion ? <span className="site-preloader-sheen" /> : null}
+            </div>
+          </div>
+          <div className="site-preloader-meta">3D scene • models • shaders</div>
+        </div>
       </div>
     </div>
   )

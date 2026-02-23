@@ -73,5 +73,8 @@ prefers‑reduced‑motion поддержан: анимации упрощают
 Модели по умолчанию лежат в `public/models`:
 
 - `public/models/model-1-plasma.glb`
-- `public/models/model-2-robot.glb`
+- `public/models/model-2-ion-drive.glb`
 - `public/models/model-3-space-voyage.glb`
+
+Источник `model-2-ion-drive.glb`: `Primary Ion Drive` by indierocktopus (CC BY 4.0)  
+https://sketchfab.com/3d-models/primary-ion-drive-d3f50a66fee74c6588dd9bc92f7fe7b3

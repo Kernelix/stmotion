@@ -4,8 +4,8 @@ const withBase = (path) => `${baseUrl}${path.replace(/^\//, '')}`
 
 export const modelPaths = {
   monolith: withBase('models/model-1-plasma.glb'),
-  ribbon: withBase('models/model-2-robot.glb'),
+  ionDrive: withBase('models/model-2-ion-drive.glb'),
   orb: withBase('models/model-3-space-voyage.glb')
 }
 
-export const modelPathList = [modelPaths.monolith, modelPaths.ribbon, modelPaths.orb]
+export const modelPathList = [modelPaths.monolith, modelPaths.ionDrive, modelPaths.orb]

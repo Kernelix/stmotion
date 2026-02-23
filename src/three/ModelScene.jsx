@@ -25,13 +25,12 @@ const models = [
     stages: modelStages.monolith
   },
   {
-    key: 'ribbon',
-    url: modelPaths.ribbon,
-    accent: '#4b91ff',
-    stages: modelStages.ribbon,
-    animationHint: 'open',
-    scaleBoost: 3.2,
-    positionBoost: [0, 0.55, 3.2]
+    key: 'ionDrive',
+    url: modelPaths.ionDrive,
+    accent: '#6ea4ff',
+    stages: modelStages.ionDrive,
+    animationHint: 'main',
+    scaleBoost: 1.12
   },
   {
     key: 'orb',
@@ -41,22 +40,6 @@ const models = [
     scaleBoost: 1
   }
 ]
-
-const isRobotAuxMesh = (mesh) => {
-  const nodeName = (mesh.name || '').toLowerCase()
-  const geometryName = (mesh.geometry?.name || '').toLowerCase()
-  const materialNames = (Array.isArray(mesh.material) ? mesh.material : [mesh.material])
-    .map((material) => (material?.name || '').toLowerCase())
-    .join(' ')
-  return (
-    nodeName.includes('plane_material_001') ||
-    geometryName.includes('plane_material_001') ||
-    nodeName.includes('circle_material') ||
-    geometryName.includes('circle_material') ||
-    materialNames.includes('plane_material_001') ||
-    materialNames.includes('circle_material')
-  )
-}
 
 function InteractiveModel({
   url,
@@ -99,10 +82,6 @@ function InteractiveModel({
       if (!child.isMesh) {
         return
       }
-      if (modelKey === 'ribbon' && isRobotAuxMesh(child)) {
-        child.visible = false
-        return
-      }
       child.castShadow = true
       child.receiveShadow = true
       const sourceMaterials = Array.isArray(child.material) ? child.material : [child.material]
@@ -125,19 +104,17 @@ function InteractiveModel({
         })
       })
 
-      if (modelKey !== 'ribbon') {
-        const edges = new EdgesGeometry(child.geometry, 35)
-        const lineMaterial = new LineBasicMaterial({
-          color: accent,
-          transparent: true,
-          opacity: 0.18
-        })
-        const lines = new LineSegments(edges, lineMaterial)
-        lines.scale.setScalar(1.001)
-        child.add(lines)
-        edgeGeometries.current.push(edges)
-        lineMaterials.current.push(lineMaterial)
-      }
+      const edges = new EdgesGeometry(child.geometry, 35)
+      const lineMaterial = new LineBasicMaterial({
+        color: accent,
+        transparent: true,
+        opacity: 0.18
+      })
+      const lines = new LineSegments(edges, lineMaterial)
+      lines.scale.setScalar(1.001)
+      child.add(lines)
+      edgeGeometries.current.push(edges)
+      lineMaterials.current.push(lineMaterial)
     })
 
     if (animations.length) {
@@ -300,10 +277,11 @@ function InteractiveModel({
   )
 }
 
-export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning }) {
+export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning, onReady }) {
   const { invalidate } = useThree()
   const isMobile = useMediaQuery('(max-width: 767px)')
   const isNarrowMobile = useMediaQuery('(max-width: 390px)')
+  const readyReportedRef = useRef(false)
   const layoutTuning = isNarrowMobile
     ? {
         xFactor: 0.2,
@@ -314,7 +292,7 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning 
         scaleFactor: 0.504,
         perModel: {
           monolith: { x: -0.004, y: 0.03, z: 0.16, scale: 0.84 },
-          ribbon: { x: 0, y: 0.11, z: 0.76, scale: 4.4355584 },
+          ionDrive: { x: 0, y: 0.04, z: -0.08, scale: 1.1 },
           orb: { x: 0.004, y: 0.04, z: 0.16, scale: 0.78 }
         }
       }
@@ -328,7 +306,7 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning 
           scaleFactor: 0.56,
           perModel: {
             monolith: { x: -0.008, y: 0.03, z: 0.12, scale: 0.86 },
-            ribbon: { x: 0, y: 0.1, z: 0.66, scale: 4.6964736 },
+            ionDrive: { x: 0, y: 0.04, z: -0.06, scale: 1.08 },
             orb: { x: 0.008, y: 0.03, z: 0.12, scale: 0.82 }
           }
         }
@@ -338,7 +316,7 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning 
           zOffset: 0,
           scaleFactor: 1,
           perModel: {
-            ribbon: { x: 0, y: 0, z: 0, scale: 3.0492 }
+            ionDrive: { x: 0, y: -0.22, z: -0.06, scale: 1.16 }
           }
         }
 
@@ -347,7 +325,15 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning 
       useGLTF.preload(model.url)
     })
     invalidate()
-  }, [])
+  }, [invalidate])
+
+  useEffect(() => {
+    if (readyReportedRef.current) {
+      return
+    }
+    readyReportedRef.current = true
+    onReady?.()
+  }, [onReady])
 
   return (
     <group>

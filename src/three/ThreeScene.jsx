@@ -2,11 +2,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ContactShadows, Environment } from '@react-three/drei'
 import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { MathUtils } from 'three'
-import { ProceduralMonolith } from '@/three/ProceduralMonolith'
-import { ProceduralRibbon } from '@/three/ProceduralRibbon'
-import { ProceduralOrbCluster } from '@/three/ProceduralOrbCluster'
 import { ModelScene } from '@/three/ModelScene'
-import { useModelAvailability } from '@/three/useModelAvailability'
 import { threeConfig } from '@/content/config'
 import { useIsLowEndDevice, useMediaQuery, usePrefersReducedMotion, usePointer } from '@/hooks'
 import { sceneSections, rigStages } from '@/three/sceneStages'
@@ -207,7 +203,7 @@ function SceneLights({ intensity, pointerRef, motionTuning }) {
   )
 }
 
-export function ThreeScene({ className }) {
+export function ThreeScene({ className, onModelsReady }) {
   const isMobile = useMediaQuery('(max-width: 767px)')
   const isNarrowMobile = useMediaQuery('(max-width: 390px)')
   const reducedMotion = usePrefersReducedMotion()
@@ -223,11 +219,11 @@ export function ThreeScene({ className }) {
       invalidateRef.current()
     }
   }, [])
+  const handleSceneReady = useCallback(() => {
+    onModelsReady?.()
+  }, [onModelsReady])
   const scrollRef = useSceneTimeline(intensity > 0, requestFrame)
   const pointerRef = usePointer(intensity > 0, requestFrame)
-  const allowModels = threeConfig.useModels || threeConfig.autoDetectModels
-  const modelsAvailable = useModelAvailability(allowModels, threeConfig.modelPaths)
-  const useModels = threeConfig.useModels ? true : threeConfig.autoDetectModels && modelsAvailable
   const baseUrl = import.meta.env.BASE_URL || '/'
   const studioEnvPath = `${baseUrl}hdri/studio_small_03_1k.hdr`
   const mobileTuning = isNarrowMobile
@@ -291,25 +287,15 @@ export function ThreeScene({ className }) {
           mobileTuning={mobileTuning}
           motionTuning={motionTuning}
         >
-          {useModels ? (
-            <Suspense
-              fallback={
-                <>
-                  <ProceduralMonolith scrollRef={scrollRef} pointerRef={pointerRef} intensity={intensity} />
-                  <ProceduralRibbon scrollRef={scrollRef} pointerRef={pointerRef} intensity={intensity} />
-                  <ProceduralOrbCluster scrollRef={scrollRef} pointerRef={pointerRef} intensity={intensity} />
-                </>
-              }
-            >
-              <ModelScene scrollRef={scrollRef} pointerRef={pointerRef} intensity={intensity} motionTuning={motionTuning} />
-            </Suspense>
-          ) : (
-            <>
-              <ProceduralMonolith scrollRef={scrollRef} pointerRef={pointerRef} intensity={intensity} />
-              <ProceduralRibbon scrollRef={scrollRef} pointerRef={pointerRef} intensity={intensity} />
-              <ProceduralOrbCluster scrollRef={scrollRef} pointerRef={pointerRef} intensity={intensity} />
-            </>
-          )}
+          <Suspense fallback={null}>
+            <ModelScene
+              scrollRef={scrollRef}
+              pointerRef={pointerRef}
+              intensity={intensity}
+              motionTuning={motionTuning}
+              onReady={handleSceneReady}
+            />
+          </Suspense>
         </SceneRig>
         <ContactShadows position={[0, -1.2, 0]} opacity={0.28 + intensity * 0.15} scale={6} blur={2} far={4} />
       </Canvas>
