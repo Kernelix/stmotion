@@ -71,6 +71,42 @@ export default function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const root = document.documentElement
+    let rafId = 0
+
+    const applyViewportHeight = () => {
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight
+      root.style.setProperty('--app-vh', `${viewportHeight * 0.01}px`)
+    }
+
+    const handleViewportChange = () => {
+      if (rafId) {
+        return
+      }
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0
+        applyViewportHeight()
+      })
+    }
+
+    applyViewportHeight()
+    window.addEventListener('resize', handleViewportChange)
+    window.addEventListener('orientationchange', handleViewportChange)
+    window.visualViewport?.addEventListener('resize', handleViewportChange)
+    window.visualViewport?.addEventListener('scroll', handleViewportChange)
+
+    return () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId)
+      }
+      window.removeEventListener('resize', handleViewportChange)
+      window.removeEventListener('orientationchange', handleViewportChange)
+      window.visualViewport?.removeEventListener('resize', handleViewportChange)
+      window.visualViewport?.removeEventListener('scroll', handleViewportChange)
+    }
+  }, [])
+
   return (
     <div className="app-shell relative min-h-[100svh] min-h-[100dvh] overflow-x-hidden text-ink-900">
       <ThreeScene className="fixed inset-0 z-0 pointer-events-none" onModelsReady={onModelsReady} />

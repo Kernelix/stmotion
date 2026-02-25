@@ -48,7 +48,7 @@ const modelCredits = [
 function FlowPanels({ kicker, title, description, cta, items, renderPanel, effectsEnabled = true }) {
   return (
     <div className="grid gap-12 lg:grid-cols-[0.55fr_1fr]">
-      <div className="space-y-6 lg:sticky lg:top-24 self-start">
+      <div className="section-copy-stack space-y-6 lg:sticky lg:top-24 self-start">
         <div className="space-y-3">
           <Caption>{kicker}</Caption>
           <ScrambleText
@@ -63,7 +63,7 @@ function FlowPanels({ kicker, title, description, cta, items, renderPanel, effec
           <p className="text-sm leading-relaxed text-ink-700">{description}</p>
         </div>
         {cta ? (
-          <Button href={cta.href} variant="ghost">
+          <Button href={cta.href} variant="ghost" className="section-cta">
             {cta.label}
           </Button>
         ) : null}
@@ -245,7 +245,7 @@ export function HomePage({ effectsEnabled = true }) {
         <Container className="relative z-10">
           <div className="grid gap-16 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="min-w-0 space-y-10">
-              <div className="space-y-6">
+              <div className="hero-copy-stack space-y-6">
                 <ScrambleText
                   as="p"
                   text="FULLSTACK РАЗРАБОТЧИК + 3D MOTION FRONTEND"
@@ -298,7 +298,7 @@ export function HomePage({ effectsEnabled = true }) {
                     '4+ года коммерческого опыта: Go, PHP, React, микросервисы и SSR/SPA.',
                     'Делаю архитектуру, интеграции и визуальную часть в одном контуре, чтобы релиз был быстрым и предсказуемым.'
                   ]}
-                  className="text-base leading-relaxed text-ink-700"
+                  className="hero-lead text-base leading-relaxed text-ink-700"
                 />
               </div>
               <div className="flex flex-wrap items-center gap-4">
@@ -356,10 +356,10 @@ export function HomePage({ effectsEnabled = true }) {
         </Container>
       </Section>
 
-      <Section id="about">
+      <Section id="about" className="content-readability">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[0.6fr_1fr]">
-            <div className="space-y-4">
+            <div className="section-copy-stack space-y-4">
               <Caption>Обо мне</Caption>
               <ScrambleText
                 as="h2"
@@ -373,14 +373,20 @@ export function HomePage({ effectsEnabled = true }) {
             </div>
             <div className="space-y-4 text-sm leading-relaxed text-ink-700">
               <RevealBlock>
-                <p>
+                <p
+                  className="section-copy-plain about-copy-strong"
+                  style={{ color: 'var(--text-on-dark-primary)', textShadow: '0 1px 1px rgb(10 13 20 / 0.28), 0 4px 14px rgb(10 13 20 / 0.26)' }}
+                >
                   Проектирую и реализую внутренние и клиентские сервисы на Go/PHP/JS: от архитектуры и API до
                   интерфейса и релиза. Фокус — системы, которые помогают бизнесу быстрее принимать решения и меньше
                   терять на ручных операциях.
                 </p>
               </RevealBlock>
               <RevealBlock delay={0.1}>
-                <p>
+                <p
+                  className="section-copy-plain about-copy-strong"
+                  style={{ color: 'var(--text-on-dark-primary)', textShadow: '0 1px 1px rgb(10 13 20 / 0.28), 0 4px 14px rgb(10 13 20 / 0.26)' }}
+                >
                   Реализовывал продуктовые контуры разного класса: промо-платформы с проверкой чеков, realtime-аукцион,
                   legacy-логистику, а также систему транспортной диспетчеризации с нуля.
                 </p>
@@ -402,7 +408,15 @@ export function HomePage({ effectsEnabled = true }) {
                     <div className="text-xs uppercase tracking-[0.28em] text-ink-500">3D стек</div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {threeStack.map((item) => (
-                        <span key={item} className="rounded-full border border-ink-900/10 bg-paper-50 px-3 py-1 text-xs font-medium text-ink-700">
+                        <span
+                          key={item}
+                          className="about-tag-readable rounded-full border border-ink-900/10 bg-paper-50 px-3 py-1 text-xs font-medium text-ink-700"
+                          style={{
+                            color: 'var(--text-on-dark-primary)',
+                            borderColor: 'rgb(201 211 227 / 0.36)',
+                            background: 'rgb(10 13 20 / 0.34)'
+                          }}
+                        >
                           {item}
                         </span>
                       ))}
@@ -412,7 +426,15 @@ export function HomePage({ effectsEnabled = true }) {
                     <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Дизайн-стек</div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {designStack.map((item) => (
-                        <span key={item} className="rounded-full border border-ink-900/10 bg-paper-50 px-3 py-1 text-xs font-medium text-ink-700">
+                        <span
+                          key={item}
+                          className="about-tag-readable rounded-full border border-ink-900/10 bg-paper-50 px-3 py-1 text-xs font-medium text-ink-700"
+                          style={{
+                            color: 'var(--text-on-dark-primary)',
+                            borderColor: 'rgb(201 211 227 / 0.36)',
+                            background: 'rgb(10 13 20 / 0.34)'
+                          }}
+                        >
                           {item}
                         </span>
                       ))}
@@ -425,7 +447,7 @@ export function HomePage({ effectsEnabled = true }) {
         </Container>
       </Section>
 
-      <Section id="services">
+      <Section id="services" className="content-readability">
         <Container>
           <FlowPanels
             kicker="Услуги"
@@ -435,15 +457,15 @@ export function HomePage({ effectsEnabled = true }) {
             effectsEnabled={effectsEnabled}
             items={services}
             renderPanel={(service, index) => (
-              <div className="flex h-full flex-col justify-between rounded-3xl border border-white/22 bg-ink-900/60 p-8 shadow-soft backdrop-blur-sm">
+              <div className="card-dark-readable flex h-full flex-col justify-between rounded-3xl border border-white/22 bg-ink-900/60 p-8 shadow-soft backdrop-blur-sm">
                 <div className="space-y-4">
-                  <div className="text-xs uppercase tracking-[0.32em] text-white/72">
+                  <div className="text-on-dark-muted text-xs uppercase tracking-[0.32em]">
                     {String(index + 1).padStart(2, '0')}
                   </div>
-                  <h3 className="text-2xl font-semibold text-white">{service.title}</h3>
-                  <p className="text-sm leading-relaxed text-white/86">{service.description}</p>
+                  <h3 className="text-on-dark-primary text-2xl font-semibold">{service.title}</h3>
+                  <p className="text-on-dark-secondary text-sm leading-relaxed">{service.description}</p>
                 </div>
-                <div className="mt-8 flex items-center justify-between text-xs uppercase tracking-[0.28em] text-white/68">
+                <div className="text-on-dark-muted mt-8 flex items-center justify-between text-xs uppercase tracking-[0.28em]">
                   <span>Результат</span>
                   <span>Рабочий релиз</span>
                 </div>
@@ -453,11 +475,11 @@ export function HomePage({ effectsEnabled = true }) {
         </Container>
       </Section>
 
-      <Section id="work">
+      <Section id="work" className="content-readability">
         <Container>
           <div className="space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-6">
-              <div className="space-y-3">
+              <div className="section-copy-stack space-y-3">
                 <Caption>Избранные работы</Caption>
                 <ScrambleText
                   as="h2"
@@ -469,7 +491,7 @@ export function HomePage({ effectsEnabled = true }) {
                   viewThreshold={0.35}
                 />
               </div>
-              <Button href="#contact" variant="ghost">
+              <Button href="#contact" variant="ghost" className="section-cta">
                 Запросить детали
               </Button>
             </div>
@@ -483,7 +505,7 @@ export function HomePage({ effectsEnabled = true }) {
         </Container>
       </Section>
 
-      <Section id="values">
+      <Section id="values" className="content-readability">
         <Container>
           <FlowPanels
             kicker="Принципы"
@@ -492,25 +514,25 @@ export function HomePage({ effectsEnabled = true }) {
             effectsEnabled={effectsEnabled}
             items={values}
             renderPanel={(value, index) => (
-              <div className="flex h-full flex-col justify-between rounded-3xl border border-white/22 bg-ink-900/60 p-8 shadow-soft backdrop-blur-sm">
+              <div className="card-dark-readable flex h-full flex-col justify-between rounded-3xl border border-white/22 bg-ink-900/60 p-8 shadow-soft backdrop-blur-sm">
                 <div className="space-y-4">
-                  <div className="text-xs uppercase tracking-[0.32em] text-white/72">
+                  <div className="text-on-dark-muted text-xs uppercase tracking-[0.32em]">
                     {String(index + 1).padStart(2, '0')}
                   </div>
-                  <h3 className="text-2xl font-semibold text-white">{value.title}</h3>
-                  <p className="text-sm leading-relaxed text-white/86">{value.description}</p>
+                  <h3 className="text-on-dark-primary text-2xl font-semibold">{value.title}</h3>
+                  <p className="text-on-dark-secondary text-sm leading-relaxed">{value.description}</p>
                 </div>
-                <div className="mt-8 text-xs uppercase tracking-[0.28em] text-white/68">Применяю в каждом проекте</div>
+                <div className="text-on-dark-muted mt-8 text-xs uppercase tracking-[0.28em]">Применяю в каждом проекте</div>
               </div>
             )}
           />
         </Container>
       </Section>
 
-      <Section id="contact" className="pb-26">
+      <Section id="contact" className="content-readability contact-readability pb-26">
         <Container>
           <div className="space-y-8">
-            <div className="space-y-3">
+            <div className="section-copy-stack space-y-3">
               <Caption>Контакты</Caption>
               <ScrambleText
                 as="h2"
@@ -531,22 +553,22 @@ export function HomePage({ effectsEnabled = true }) {
               ))}
             </RevealGrid>
             <Divider />
-            <div className="flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.28em] text-white/72">
+            <div className="text-on-dark-secondary flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.28em]">
               <span>Работаю по всему миру</span>
               <span>© 2026 ST Celestial</span>
             </div>
-            <div className="space-y-1 text-[10px] leading-relaxed text-white/58">
+            <div className="text-on-dark-muted space-y-1 text-[10px] leading-relaxed">
               {modelCredits.map((credit) => (
                 <p key={credit.title}>
-                  <a href={credit.modelUrl} target="_blank" rel="noreferrer noopener" className="hover:text-white/88">
+                  <a href={credit.modelUrl} target="_blank" rel="noreferrer noopener" className="on-dark-link">
                     "{credit.title}"
                   </a>{' '}
                   by{' '}
-                  <a href={credit.authorUrl} target="_blank" rel="noreferrer noopener" className="hover:text-white/88">
+                  <a href={credit.authorUrl} target="_blank" rel="noreferrer noopener" className="on-dark-link">
                     {credit.author}
                   </a>{' '}
                   is licensed under{' '}
-                  <a href={ccByUrl} target="_blank" rel="noreferrer noopener" className="hover:text-white/88">
+                  <a href={ccByUrl} target="_blank" rel="noreferrer noopener" className="on-dark-link">
                     Creative Commons Attribution
                   </a>
                   .
