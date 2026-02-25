@@ -67,6 +67,7 @@ prefers‑reduced‑motion поддержан: анимации упрощают
 Режимы и флаги:
 
 - `src/content/config.js` — настройки рендера и пути моделей.
+- `VITE_THREE_FORCE_MODE=full|lite|static` — принудительный режим 3D (используется в production-deploy).
 
 ## GLB модели
 

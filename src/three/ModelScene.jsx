@@ -6,6 +6,9 @@ import {
   AnimationMixer,
   Box3,
   Color,
+  DoubleSide,
+  NormalBlending,
+  SRGBColorSpace,
   EdgesGeometry,
   LineBasicMaterial,
   LineSegments,
@@ -22,7 +25,10 @@ const models = [
     key: 'monolith',
     url: modelPaths.monolith,
     accent: '#2b7cff',
-    stages: modelStages.monolith
+    stages: modelStages.monolith,
+    colorMode: 'source',
+    showEdges: false,
+    animationSpeed: 1
   },
   {
     key: 'ionDrive',
@@ -37,7 +43,7 @@ const models = [
     url: modelPaths.orb,
     accent: '#9cc0ff',
     stages: modelStages.orb,
-    scaleBoost: 1
+    scaleBoost: 1.91
   }
 ]
 
@@ -47,6 +53,9 @@ function InteractiveModel({
   stages,
   animationHint,
   scaleBoost = 1,
+  colorMode = 'default',
+  showEdges = true,
+  animationSpeed = 1,
   positionBoost = [0, 0, 0],
   scrollRef,
   pointerRef,
@@ -67,6 +76,8 @@ function InteractiveModel({
   const scrollImpulse = useRef(0)
 
   const accentColor = useMemo(() => new Color(accent), [accent])
+  const isSourceColor = colorMode === 'source'
+  const isVivid = colorMode === 'vivid'
   const clone = useMemo(() => skeletonClone(scene), [scene])
 
   useEffect(() => {
@@ -92,6 +103,45 @@ function InteractiveModel({
         if (!material?.isMaterial) {
           return
         }
+
+        if (isSourceColor && modelKey === 'monolith' && material.name === 'material') {
+          material.transparent = true
+          material.opacity = 1
+          material.depthWrite = true
+          material.side = DoubleSide
+          material.alphaTest = 0.08
+          material.blending = NormalBlending
+          if (material.color) {
+            material.color.setRGB(0.82, 0.86, 0.95)
+          }
+          if (material.emissive) {
+            material.emissive.setRGB(0.38, 0.46, 0.68)
+          }
+          if (material.map) {
+            material.emissiveMap = material.map
+          }
+          if (typeof material.emissiveIntensity === 'number') {
+            material.emissiveIntensity = 0.58
+          }
+          if (typeof material.roughness === 'number') {
+            material.roughness = 0.82
+          }
+          if (typeof material.metalness === 'number') {
+            material.metalness = 0.02
+          }
+          if (typeof material.clearcoat === 'number') {
+            material.clearcoat = 0
+          }
+          if (typeof material.clearcoatRoughness === 'number') {
+            material.clearcoatRoughness = 1
+          }
+          if (material.map) {
+            material.map.colorSpace = SRGBColorSpace
+            material.map.needsUpdate = true
+          }
+          material.needsUpdate = true
+        }
+
         materials.current.push({
           material,
           color: material.color ? material.color.clone() : null,
@@ -104,17 +154,19 @@ function InteractiveModel({
         })
       })
 
-      const edges = new EdgesGeometry(child.geometry, 35)
-      const lineMaterial = new LineBasicMaterial({
-        color: accent,
-        transparent: true,
-        opacity: 0.18
-      })
-      const lines = new LineSegments(edges, lineMaterial)
-      lines.scale.setScalar(1.001)
-      child.add(lines)
-      edgeGeometries.current.push(edges)
-      lineMaterials.current.push(lineMaterial)
+      if (showEdges) {
+        const edges = new EdgesGeometry(child.geometry, 35)
+        const lineMaterial = new LineBasicMaterial({
+          color: accent,
+          transparent: true,
+          opacity: 0.18
+        })
+        const lines = new LineSegments(edges, lineMaterial)
+        lines.scale.setScalar(1.001)
+        child.add(lines)
+        edgeGeometries.current.push(edges)
+        lineMaterials.current.push(lineMaterial)
+      }
     })
 
     if (animations.length) {
@@ -122,7 +174,7 @@ function InteractiveModel({
       const normalizedHint = animationHint?.toLowerCase()
       const selectedClip =
         animations.find((clip) => normalizedHint && (clip.name || '').toLowerCase().includes(normalizedHint)) ?? animations[0]
-      mixer.clipAction(selectedClip).reset().play()
+      mixer.clipAction(selectedClip).reset().setEffectiveTimeScale(animationSpeed).play()
       mixerRef.current = mixer
     }
 
@@ -148,7 +200,7 @@ function InteractiveModel({
       edgeGeometries.current = []
       materials.current = []
     }
-  }, [animations, clone, accent, invalidate])
+  }, [animations, clone, accent, animationSpeed, invalidate, isSourceColor, modelKey, showEdges])
 
   useFrame((state, delta) => {
     if (!group.current) {
@@ -229,31 +281,40 @@ function InteractiveModel({
         clearcoat,
         clearcoatRoughness
       }) => {
+        const colorBlend = isSourceColor ? 0 : isVivid ? 0.92 : energy * 0.18
+        const emissiveBlend = isSourceColor ? 0 : isVivid ? 0.84 : energy * 0.2
+        const emissiveBoost = isSourceColor ? 0 : isVivid ? 1.15 : energy * 0.5
+
         if (color && material.color) {
-          material.color.copy(color).lerp(accentColor, energy * 0.18)
+          material.color.copy(color).lerp(accentColor, colorBlend)
         }
         if (emissive && material.emissive) {
-          material.emissive.copy(emissive).lerp(accentColor, energy * 0.2)
+          material.emissive.copy(emissive).lerp(accentColor, emissiveBlend)
           if (typeof emissiveIntensity === 'number') {
-            material.emissiveIntensity = emissiveIntensity + energy * 0.5
+            if (isSourceColor) {
+              const pulse = 0.78 + (Math.sin(elapsed * 1.8 + pose.energy * Math.PI) + 1) * 0.15
+              material.emissiveIntensity = emissiveIntensity * pulse
+            } else {
+              material.emissiveIntensity = emissiveIntensity + emissiveBoost
+            }
           }
         }
-        if (typeof roughness === 'number') {
+        if (!isSourceColor && typeof roughness === 'number') {
           material.roughness = MathUtils.lerp(roughness, Math.max(0.06, roughness * 0.7), energy)
         }
-        if (typeof metalness === 'number') {
+        if (!isSourceColor && typeof metalness === 'number') {
           material.metalness = MathUtils.lerp(metalness, Math.min(1, metalness + 0.14), energy)
         }
-        if (typeof clearcoat === 'number') {
+        if (!isSourceColor && typeof clearcoat === 'number') {
           material.clearcoat = MathUtils.lerp(clearcoat, Math.min(1, clearcoat + 0.2), energy)
         }
-        if (typeof clearcoatRoughness === 'number') {
+        if (!isSourceColor && typeof clearcoatRoughness === 'number') {
           material.clearcoatRoughness = MathUtils.lerp(clearcoatRoughness, Math.max(0.02, clearcoatRoughness * 0.7), energy)
         }
       }
     )
     lineMaterials.current.forEach((lineMaterial) => {
-      lineMaterial.opacity = 0.18 + energy * 0.5
+      lineMaterial.opacity = isSourceColor ? 0.12 + energy * 0.24 : isVivid ? 0.24 + energy * 0.56 : 0.18 + energy * 0.5
     })
 
     if (
@@ -289,36 +350,37 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning,
         bottomXBias: -0.22,
         yOffset: 0.08,
         zOffset: 0.44,
-        scaleFactor: 0.504,
+        scaleFactor: 1.08864,
         perModel: {
-          monolith: { x: -0.004, y: 0.03, z: 0.16, scale: 0.84 },
-          ionDrive: { x: 0, y: 0.04, z: -0.08, scale: 1.1 },
-          orb: { x: 0.004, y: 0.04, z: 0.16, scale: 0.78 }
+          monolith: { x: -0.08, y: -0.28, z: 0.22, scale: 0.82 },
+          ionDrive: { x: 0.62, y: 0.02, z: -0.1, scale: 1.06 },
+          orb: { x: -0.42, y: 0.06, z: -2.2, scale: 2.18 }
         }
       }
     : isMobile
       ? {
-          xFactor: 0.24,
+          xFactor: 0.28,
           xOffset: -0.1,
           bottomXBias: -0.18,
           yOffset: 0.06,
           zOffset: 0.34,
-          scaleFactor: 0.56,
-          perModel: {
-            monolith: { x: -0.008, y: 0.03, z: 0.12, scale: 0.86 },
-            ionDrive: { x: 0, y: 0.04, z: -0.06, scale: 1.08 },
-            orb: { x: 0.008, y: 0.03, z: 0.12, scale: 0.82 }
-          }
+          scaleFactor: 1.2096,
+        perModel: {
+          monolith: { x: -0.1, y: -0.32, z: 0.18, scale: 0.84 },
+          ionDrive: { x: 0.72, y: 0.02, z: -0.08, scale: 1.04 },
+          orb: { x: -0.52, y: 0.06, z: -2.25, scale: 2.32 }
         }
-      : {
+      }
+    : {
           xFactor: 1,
           yOffset: 0,
           zOffset: 0,
-          scaleFactor: 1,
-          perModel: {
-            ionDrive: { x: 0, y: -0.22, z: -0.06, scale: 1.16 }
-          }
+        scaleFactor: 1,
+        perModel: {
+          ionDrive: { x: 0, y: -0.22, z: -0.06, scale: 1.16 },
+          orb: { x: -2.5, y: 0.1, z: -2.35, scale: 2.91 }
         }
+      }
 
   useEffect(() => {
     models.forEach((model) => {
@@ -345,6 +407,9 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning,
           stages={model.stages}
           animationHint={model.animationHint}
           scaleBoost={model.scaleBoost}
+          colorMode={model.colorMode}
+          showEdges={model.showEdges}
+          animationSpeed={model.animationSpeed}
           positionBoost={model.positionBoost}
           scrollRef={scrollRef}
           pointerRef={pointerRef}

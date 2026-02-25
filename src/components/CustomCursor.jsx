@@ -1,19 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePrefersReducedMotion } from '@/hooks'
+import { useIsLowEndDevice } from '@/hooks/useIsLowEndDevice'
 
 const interactiveSelector = 'a, button, [role="button"], [data-cursor="interactive"]'
 
 export function CustomCursor() {
   const reducedMotion = usePrefersReducedMotion()
+  const isLowEndDevice = useIsLowEndDevice()
   const [enabled, setEnabled] = useState(false)
   const dotRef = useRef(null)
   const ringRef = useRef(null)
   const rafRef = useRef(null)
   const targetRef = useRef({ x: 0, y: 0 })
   const currentRef = useRef({ x: 0, y: 0 })
+  const lastUpdateRef = useRef({ x: 0, y: 0 })
+  const lastTimeRef = useRef(0)
+
+  // Адаптивная частота обновления для устройств с низкой производительностью
+  const updateRate = isLowEndDevice ? 1000 / 30 : 1000 / 60 // 30 FPS для слабых устройств, 60 FPS для остальных
 
   useEffect(() => {
-    if (typeof window === 'undefined' || reducedMotion) {
+    if (typeof window === 'undefined' || reducedMotion || isLowEndDevice) {
       setEnabled(false)
       return undefined
     }
@@ -28,7 +35,7 @@ export function CustomCursor() {
     return () => {
       media.removeEventListener('change', apply)
     }
-  }, [reducedMotion])
+  }, [reducedMotion, isLowEndDevice])
 
   useEffect(() => {
     if (!enabled) {
@@ -88,15 +95,31 @@ export function CustomCursor() {
       setPressed(false)
     }
 
-    const loop = () => {
-      const tx = targetRef.current.x
-      const ty = targetRef.current.y
-      currentRef.current.x += (tx - currentRef.current.x) * 0.22
-      currentRef.current.y += (ty - currentRef.current.y) * 0.22
-      const x = currentRef.current.x
-      const y = currentRef.current.y
-      dotNode.style.transform = `translate3d(${x}px, ${y}px, 0)`
-      ringNode.style.transform = `translate3d(${x}px, ${y}px, 0)`
+    const loop = (timestamp) => {
+      // Ограничиваем частоту обновления для лучшей производительности
+      if (timestamp - lastTimeRef.current >= updateRate) {
+        const tx = targetRef.current.x
+        const ty = targetRef.current.y
+
+        // Оптимизированное сглаживание с меньшим коэффициентом для слабых устройств
+        const easingFactor = isLowEndDevice ? 0.15 : 0.22
+        currentRef.current.x += (tx - currentRef.current.x) * easingFactor
+        currentRef.current.y += (ty - currentRef.current.y) * easingFactor
+
+        const x = currentRef.current.x
+        const y = currentRef.current.y
+
+        // Обновляем только если позиция действительно изменилась
+        if (Math.abs(x - lastUpdateRef.current.x) > 0.1 || Math.abs(y - lastUpdateRef.current.y) > 0.1) {
+          dotNode.style.transform = `translate3d(${x}px, ${y}px, 0)`
+          ringNode.style.transform = `translate3d(${x}px, ${y}px, 0)`
+          lastUpdateRef.current.x = x
+          lastUpdateRef.current.y = y
+        }
+
+        lastTimeRef.current = timestamp
+      }
+
       rafRef.current = window.requestAnimationFrame(loop)
     }
 
@@ -116,7 +139,7 @@ export function CustomCursor() {
         rafRef.current = null
       }
     }
-  }, [enabled])
+  }, [enabled, isLowEndDevice, updateRate])
 
   if (!enabled) {
     return null

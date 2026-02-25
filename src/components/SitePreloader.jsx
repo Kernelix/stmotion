@@ -1,21 +1,45 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePrefersReducedMotion } from '@/hooks'
 
 export function SitePreloader({ visible, progress = 0 }) {
   const reducedMotion = usePrefersReducedMotion()
   const [mounted, setMounted] = useState(visible)
-  const percent = Math.max(0, Math.min(100, Math.round(progress)))
+  const percent = Math.max(0, Math.min(100, progress))
+  const [displayPercent, setDisplayPercent] = useState(percent)
+  const maxVisiblePercentRef = useRef(percent)
+  const prevVisibleRef = useRef(visible)
   const ringRadius = 42
   const ringCircumference = 2 * Math.PI * ringRadius
-  const ringOffset = ringCircumference * (1 - percent / 100)
+  const roundedDisplayPercent = Math.max(0, Math.min(100, Math.round(displayPercent)))
   const status =
-    percent < 25
+    roundedDisplayPercent < 30
       ? 'Инициализация сцены'
-      : percent < 60
+      : roundedDisplayPercent < 70
         ? 'Загрузка ассетов'
-        : percent < 95
+        : roundedDisplayPercent < 95
           ? 'Сборка визуала'
-          : 'Финальный штрих'
+          : roundedDisplayPercent < 100
+            ? 'Почти готово'
+            : 'Финальный штрих'
+  const displayRingOffset = ringCircumference * (1 - displayPercent / 100)
+
+  useEffect(() => {
+    if (visible && !prevVisibleRef.current) {
+      maxVisiblePercentRef.current = percent
+      setDisplayPercent(percent)
+    }
+    prevVisibleRef.current = visible
+  }, [percent, visible])
+
+  useEffect(() => {
+    if (visible) {
+      maxVisiblePercentRef.current = Math.max(maxVisiblePercentRef.current, percent)
+      setDisplayPercent(maxVisiblePercentRef.current)
+      return
+    }
+    maxVisiblePercentRef.current = 100
+    setDisplayPercent(100)
+  }, [percent, visible])
 
   useEffect(() => {
     let timeoutId = null
@@ -50,7 +74,7 @@ export function SitePreloader({ visible, progress = 0 }) {
 
   return (
     <div
-      className={`site-preloader fixed inset-0 z-[90] flex items-center justify-center transition-opacity duration-300 ${
+      className={`site-preloader fixed inset-0 z-[90] flex items-center justify-center transition-opacity duration-300 ease-out ${
         visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       aria-hidden={!visible}
@@ -69,19 +93,26 @@ export function SitePreloader({ visible, progress = 0 }) {
               r={ringRadius}
               style={{
                 strokeDasharray: ringCircumference,
-                strokeDashoffset: ringOffset
+                strokeDashoffset: displayRingOffset,
+                transition: reducedMotion ? 'none' : 'stroke-dashoffset 260ms cubic-bezier(0.22, 1, 0.36, 1)'
               }}
             />
           </svg>
           <div className="site-preloader-percent" aria-live="polite">
-            {String(percent).padStart(2, '0')}%
+            {String(roundedDisplayPercent).padStart(2, '0')}%
           </div>
         </div>
         <div className="site-preloader-copy">
           <div className="site-preloader-title">ST Celestial</div>
           <div className="site-preloader-status">{status}</div>
           <div className="site-preloader-track">
-            <div className="site-preloader-fill" style={{ width: `${percent}%` }}>
+            <div
+              className="site-preloader-fill"
+              style={{
+                width: `${displayPercent}%`,
+                transition: reducedMotion ? 'none' : 'width 260ms cubic-bezier(0.22, 1, 0.36, 1)'
+              }}
+            >
               {!reducedMotion ? <span className="site-preloader-sheen" /> : null}
             </div>
           </div>

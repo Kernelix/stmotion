@@ -86,7 +86,11 @@ export function Header() {
             ))}
           </nav>
           <div className="hidden md:flex">
-            <Button href="#contact" variant="accent">
+            <Button
+              href="#contact"
+              variant="accent"
+              className="border-white/28 bg-white/70 text-ink-900 backdrop-blur-sm hover:border-white/46 hover:bg-white/80"
+            >
               Обсудить проект
             </Button>
           </div>

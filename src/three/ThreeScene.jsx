@@ -1,5 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { ContactShadows, Environment } from '@react-three/drei'
+import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { MathUtils } from 'three'
 import { ModelScene } from '@/three/ModelScene'
@@ -210,9 +211,12 @@ export function ThreeScene({ className, onModelsReady }) {
   const lowEnd = useIsLowEndDevice()
   const mode = threeConfig.forceMode ?? (reducedMotion ? 'static' : isMobile ? 'full' : lowEnd ? 'lite' : 'full')
   const intensity = mode === 'full' ? 1 : mode === 'lite' ? 0.6 : 0
-  const dpr = mode === 'full' ? (isNarrowMobile ? [1.1, 1.7] : isMobile ? [1.2, 2] : [1, 1.5]) : [1, 1.25]
+  const dpr = mode === 'full' ? (isNarrowMobile ? [1.2, 1.9] : isMobile ? [1.25, 2.1] : [1.3, 2.2]) : [1, 1.25]
   const antialias = isMobile ? true : mode !== 'lite'
   const powerPreference = mode === 'full' ? 'high-performance' : 'low-power'
+  const enablePlasmaBloom = mode === 'full' && !lowEnd
+  const bloomIntensity = isMobile ? 0.2 : 0.26
+  const fogArgs = mode === 'full' ? null : ['#f6f6f2', 6, 12]
   const invalidateRef = useRef(null)
   const requestFrame = useCallback(() => {
     if (invalidateRef.current) {
@@ -277,7 +281,7 @@ export function ThreeScene({ className, onModelsReady }) {
       >
         <InvalidateBridge invalidateRef={invalidateRef} />
         <color attach="background" args={['#f6f6f2']} />
-        <fog attach="fog" args={['#f6f6f2', 6, 12]} />
+        {fogArgs ? <fog attach="fog" args={fogArgs} /> : null}
         <SceneLights intensity={intensity} pointerRef={pointerRef} motionTuning={motionTuning} />
         {mode === 'full' ? <Environment files={studioEnvPath} /> : null}
         <SceneRig
@@ -297,6 +301,16 @@ export function ThreeScene({ className, onModelsReady }) {
             />
           </Suspense>
         </SceneRig>
+        {enablePlasmaBloom ? (
+          <EffectComposer multisampling={isMobile ? 2 : 4} enableNormalPass={false}>
+            <Bloom
+              intensity={bloomIntensity}
+              luminanceThreshold={1}
+              luminanceSmoothing={0.01}
+              radius={0.08}
+            />
+          </EffectComposer>
+        ) : null}
         <ContactShadows position={[0, -1.2, 0]} opacity={0.28 + intensity * 0.15} scale={6} blur={2} far={4} />
       </Canvas>
     </div>

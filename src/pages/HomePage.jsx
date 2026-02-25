@@ -23,6 +23,27 @@ import { cx } from '@/lib/cx'
 const easing = [0.22, 1, 0.36, 1]
 const threeStack = ['Three.js', 'React Three Fiber', '@react-three/drei', 'GLSL basics', 'Blender assets', 'WebGL optimization']
 const designStack = ['Figma', 'After Effects', 'Spline', 'DaVinci Resolve', 'Typography systems', 'Motion direction']
+const ccByUrl = 'http://creativecommons.org/licenses/by/4.0/'
+const modelCredits = [
+  {
+    title: 'Evanescent Plasma',
+    modelUrl: 'https://skfb.ly/orsrB',
+    author: 'Tycho Magnetic Anomaly',
+    authorUrl: 'https://sketchfab.com/Tycho_Magnetic_Anomaly'
+  },
+  {
+    title: 'Primary Ion Drive ///',
+    modelUrl: 'https://skfb.ly/Yx8S',
+    author: 'indierocktopus',
+    authorUrl: 'https://sketchfab.com/indierocktopus'
+  },
+  {
+    title: '#24 Dizzying space travel - "Inktober2019"',
+    modelUrl: 'https://sketchfab.com/3d-models/24-dizzying-space-travel-inktober2019-08ee5e4cabee421ebf0b2cc927d4d6fc',
+    author: 'Canary Games',
+    authorUrl: 'https://sketchfab.com/CanaryGames'
+  }
+]
 
 function FlowPanels({ kicker, title, description, cta, items, renderPanel, effectsEnabled = true }) {
   return (
@@ -216,9 +237,9 @@ function StickyPanels({ kicker, title, description, cta, items, renderPanel, get
 
 export function HomePage({ effectsEnabled = true }) {
   return (
-    <main>
+    <main className="readable-ink">
       <Section id="hero" className="relative isolate pt-24 md:pt-30">
-        <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="pointer-events-none absolute inset-0 z-0 hidden md:block">
           <div className="absolute inset-0 bg-[radial-gradient(520px_380px_at_12%_18%,rgba(246,246,242,0.95),rgba(246,246,242,0.7)_58%,rgba(246,246,242,0)_78%),radial-gradient(520px_380px_at_86%_26%,rgba(246,246,242,0.95),rgba(246,246,242,0.65)_60%,rgba(246,246,242,0)_82%)] [mask-image:linear-gradient(to_bottom,black,black_70%,transparent)]" />
         </div>
         <Container className="relative z-10">
@@ -365,7 +386,7 @@ export function HomePage({ effectsEnabled = true }) {
                 </p>
               </RevealBlock>
               <RevealBlock delay={0.14}>
-                <div className="rounded-2xl border border-ink-900/10 bg-paper-50 p-5">
+                <div className="rounded-2xl border border-accent-300/40 bg-white/70 p-5 backdrop-blur-sm">
                   <div className="text-xs uppercase tracking-[0.28em] text-ink-500">Бизнес-задачи, которые закрываю</div>
                   <ul className="mt-3 space-y-2 text-sm leading-relaxed text-ink-700">
                     <li>Автоматизация диспетчерской работы: статусы перевозок, задержки, таймлайн событий, контроль операций.</li>
@@ -414,15 +435,15 @@ export function HomePage({ effectsEnabled = true }) {
             effectsEnabled={effectsEnabled}
             items={services}
             renderPanel={(service, index) => (
-              <div className="flex h-full flex-col justify-between rounded-3xl border border-ink-900/10 bg-paper-50 p-8 shadow-soft">
+              <div className="flex h-full flex-col justify-between rounded-3xl border border-white/22 bg-ink-900/60 p-8 shadow-soft backdrop-blur-sm">
                 <div className="space-y-4">
-                  <div className="text-xs uppercase tracking-[0.32em] text-ink-500">
+                  <div className="text-xs uppercase tracking-[0.32em] text-white/72">
                     {String(index + 1).padStart(2, '0')}
                   </div>
-                  <h3 className="text-2xl font-semibold text-ink-900">{service.title}</h3>
-                  <p className="text-sm leading-relaxed text-ink-700">{service.description}</p>
+                  <h3 className="text-2xl font-semibold text-white">{service.title}</h3>
+                  <p className="text-sm leading-relaxed text-white/86">{service.description}</p>
                 </div>
-                <div className="mt-8 flex items-center justify-between text-xs uppercase tracking-[0.28em] text-ink-500">
+                <div className="mt-8 flex items-center justify-between text-xs uppercase tracking-[0.28em] text-white/68">
                   <span>Результат</span>
                   <span>Рабочий релиз</span>
                 </div>
@@ -471,15 +492,15 @@ export function HomePage({ effectsEnabled = true }) {
             effectsEnabled={effectsEnabled}
             items={values}
             renderPanel={(value, index) => (
-              <div className="flex h-full flex-col justify-between rounded-3xl border border-ink-900/10 bg-paper-50 p-8 shadow-soft">
+              <div className="flex h-full flex-col justify-between rounded-3xl border border-white/22 bg-ink-900/60 p-8 shadow-soft backdrop-blur-sm">
                 <div className="space-y-4">
-                  <div className="text-xs uppercase tracking-[0.32em] text-ink-500">
+                  <div className="text-xs uppercase tracking-[0.32em] text-white/72">
                     {String(index + 1).padStart(2, '0')}
                   </div>
-                  <h3 className="text-2xl font-semibold text-ink-900">{value.title}</h3>
-                  <p className="text-sm leading-relaxed text-ink-700">{value.description}</p>
+                  <h3 className="text-2xl font-semibold text-white">{value.title}</h3>
+                  <p className="text-sm leading-relaxed text-white/86">{value.description}</p>
                 </div>
-                <div className="mt-8 text-xs uppercase tracking-[0.28em] text-ink-500">Применяю в каждом проекте</div>
+                <div className="mt-8 text-xs uppercase tracking-[0.28em] text-white/68">Применяю в каждом проекте</div>
               </div>
             )}
           />
@@ -510,9 +531,27 @@ export function HomePage({ effectsEnabled = true }) {
               ))}
             </RevealGrid>
             <Divider />
-            <div className="flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.28em] text-ink-500">
+            <div className="flex flex-wrap items-center justify-between gap-4 text-xs uppercase tracking-[0.28em] text-white/72">
               <span>Работаю по всему миру</span>
               <span>© 2026 ST Celestial</span>
+            </div>
+            <div className="space-y-1 text-[10px] leading-relaxed text-white/58">
+              {modelCredits.map((credit) => (
+                <p key={credit.title}>
+                  <a href={credit.modelUrl} target="_blank" rel="noreferrer noopener" className="hover:text-white/88">
+                    "{credit.title}"
+                  </a>{' '}
+                  by{' '}
+                  <a href={credit.authorUrl} target="_blank" rel="noreferrer noopener" className="hover:text-white/88">
+                    {credit.author}
+                  </a>{' '}
+                  is licensed under{' '}
+                  <a href={ccByUrl} target="_blank" rel="noreferrer noopener" className="hover:text-white/88">
+                    Creative Commons Attribution
+                  </a>
+                  .
+                </p>
+              ))}
             </div>
           </div>
         </Container>

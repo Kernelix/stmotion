@@ -10,6 +10,7 @@ import { ThreeScene } from '@/three/ThreeScene'
 export default function App() {
   const [domReady, setDomReady] = useState(() => document.readyState === 'complete')
   const [modelsReady, setModelsReady] = useState(false)
+  const [forceReady, setForceReady] = useState(false)
   const { progress, total } = useProgress()
   const onModelsReady = useCallback(() => {
     setModelsReady(true)
@@ -17,10 +18,11 @@ export default function App() {
   const modelProgress = modelsReady ? 100 : total > 0 ? progress : 0
   const preloadProgress = useMemo(() => {
     const safeModelProgress = Math.max(0, Math.min(100, modelProgress))
-    const capped = domReady ? safeModelProgress : Math.min(safeModelProgress, 99)
+    // Разрешаем достичь 100% для корректного отображения "Финального штриха"
+    const capped = domReady ? safeModelProgress : Math.min(safeModelProgress, 100)
     return Math.round(capped)
   }, [domReady, modelProgress])
-  const ready = domReady && modelsReady
+  const ready = domReady && (modelsReady || forceReady)
 
   useEffect(() => {
     if (document.readyState === 'complete') {
@@ -36,6 +38,19 @@ export default function App() {
       window.removeEventListener('load', finish)
     }
   }, [])
+
+  useEffect(() => {
+    if (modelsReady) {
+      return undefined
+    }
+    const timeoutId = window.setTimeout(() => {
+      setForceReady(true)
+    }, 12000)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [modelsReady])
 
   useEffect(() => {
     const ua = navigator.userAgent || ''
@@ -57,11 +72,11 @@ export default function App() {
   }, [])
 
   return (
-    <div className="app-shell relative min-h-[100svh] overflow-x-hidden text-ink-900">
+    <div className="app-shell relative min-h-[100svh] min-h-[100dvh] overflow-x-hidden text-ink-900">
       <ThreeScene className="fixed inset-0 z-0 pointer-events-none" onModelsReady={onModelsReady} />
       <div className="pointer-events-none fixed inset-0 z-[1]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.8),_rgba(246,246,242,0.2))]" />
-        <div className="absolute inset-0 opacity-[0.18] [background-size:220px_220px] [background-image:linear-gradient(to_right,rgba(21,21,21,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(21,21,21,0.05)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_82%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.22),_rgba(246,246,242,0.02))]" />
+        <div className="absolute inset-0 opacity-[0.1] [background-size:220px_220px] [background-image:linear-gradient(to_right,rgba(21,21,21,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(21,21,21,0.05)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_82%)]" />
       </div>
       <div className="relative z-10">
         <SitePreloader visible={!ready} progress={preloadProgress} />
