@@ -3,7 +3,6 @@
 
 :root {
   color-scheme: light;
-  --app-vh: 1vh;
   --ink-900: #151515;
   --ink-700: #303030;
   --paper-50: #f6f6f2;
@@ -92,23 +91,8 @@ a {
 #root {
   min-height: 100svh;
   min-height: 100dvh;
-  min-height: calc(var(--app-vh, 1vh) * 100);
   max-width: 100%;
   padding-bottom: max(env(safe-area-inset-bottom), 0px);
-}
-
-.app-viewport-min {
-  min-height: 100vh;
-  min-height: 100svh;
-  min-height: 100dvh;
-  min-height: calc(var(--app-vh, 1vh) * 100);
-}
-
-.app-viewport-height {
-  height: 100vh;
-  height: 100svh;
-  height: 100dvh;
-  height: calc(var(--app-vh, 1vh) * 100);
 }
 
 .app-shell,
