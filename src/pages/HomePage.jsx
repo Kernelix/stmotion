@@ -344,13 +344,13 @@ export function HomePage({ effectsEnabled = true }) {
                   </div>
                 </div>
               </RevealBlock>
-              <Parallax offset={60} className="rounded-3xl border border-ink-900/5 bg-white/70 p-6 backdrop-blur-md shadow-soft">
+              <RevealBlock delay={0.08} className="rounded-3xl border border-ink-900/5 bg-white/70 p-6 backdrop-blur-md shadow-soft">
                 <div className="text-xs uppercase tracking-[0.3em] text-ink-500">Как я работаю</div>
                 <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink-900/85">
                   <p>Беру ответственность за весь цикл: аналитика, архитектура, код, тесты, деплой и поддержка.</p>
                   <p>3D и анимацию внедряю осознанно: от подготовки ассетов в Blender до оптимизированного рендера с контролем FPS и доступности.</p>
                 </div>
-              </Parallax>
+              </RevealBlock>
             </div>
           </div>
         </Container>

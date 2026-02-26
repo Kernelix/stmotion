@@ -48,7 +48,8 @@ export function RevealText({
             }
           }
         }}
-        className="inline-block"
+        className="inline-block [transform-style:preserve-3d]"
+        style={{ transformPerspective: 1000 }}
       >
         {tokens.map((token, index) => {
           const clean = token.replace(/[^\w-]/g, '')
@@ -56,14 +57,27 @@ export function RevealText({
             <motion.span
               key={`${token}-${index}`}
               variants={{
-                hidden: { y: '110%', opacity: 0 },
+                hidden: {
+                  opacity: 0,
+                  scale: 0.97,
+                  rotateX: -10,
+                  filter: 'blur(6px) saturate(0.94)'
+                },
                 visible: {
-                  y: '0%',
                   opacity: 1,
-                  transition: { duration: 0.85, ease: easing }
+                  scale: 1,
+                  rotateX: 0,
+                  filter: 'blur(0px) saturate(1)',
+                  transition: {
+                    ease: easing,
+                    opacity: { duration: 0.55 },
+                    scale: { duration: 0.92 },
+                    rotateX: { duration: 0.92 },
+                    filter: { duration: 0.78 }
+                  }
                 }
               }}
-              className={cx('inline-block overflow-hidden', isLines ? 'block' : '')}
+              className={cx('inline-block overflow-hidden [transform-style:preserve-3d]', isLines ? 'block' : '')}
             >
               <span className={cx(highlightWords.includes(clean) ? highlightClassName : '')}>
                 {token}

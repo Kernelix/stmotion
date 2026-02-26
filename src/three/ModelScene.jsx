@@ -408,7 +408,7 @@ export function ModelScene({ scrollRef, pointerRef, intensity = 1, motionTuning,
           animationHint={model.animationHint}
           scaleBoost={model.scaleBoost}
           colorMode={model.colorMode}
-          showEdges={model.showEdges}
+          showEdges={intensity >= 0.8 ? model.showEdges : false}
           animationSpeed={model.animationSpeed}
           positionBoost={model.positionBoost}
           scrollRef={scrollRef}

@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { ContactShadows, Environment } from '@react-three/drei'
+import { Environment } from '@react-three/drei'
 import { Bloom, EffectComposer } from '@react-three/postprocessing'
 import { Suspense, useCallback, useEffect, useRef } from 'react'
 import { MathUtils } from 'three'
@@ -209,13 +209,14 @@ export function ThreeScene({ className, onModelsReady }) {
   const isNarrowMobile = useMediaQuery('(max-width: 390px)')
   const reducedMotion = usePrefersReducedMotion()
   const lowEnd = useIsLowEndDevice()
-  const mode = threeConfig.forceMode ?? (reducedMotion ? 'static' : isMobile ? 'full' : lowEnd ? 'lite' : 'full')
+  const mode = threeConfig.forceMode ?? (reducedMotion ? 'static' : lowEnd ? 'lite' : 'full')
   const intensity = mode === 'full' ? 1 : mode === 'lite' ? 0.6 : 0
-  const dpr = mode === 'full' ? (isNarrowMobile ? [1.2, 1.9] : isMobile ? [1.25, 2.1] : [1.3, 2.2]) : [1, 1.25]
-  const antialias = isMobile ? true : mode !== 'lite'
+  const dpr = mode === 'full' ? (isNarrowMobile ? [1, 1.35] : isMobile ? [1, 1.45] : [1, 1.65]) : [0.9, 1.15]
+  const antialias = mode === 'full' && !isMobile
   const powerPreference = mode === 'full' ? 'high-performance' : 'low-power'
-  const enablePlasmaBloom = mode === 'full' && !lowEnd
+  const enablePlasmaBloom = mode === 'full' && (!isMobile || !lowEnd)
   const bloomIntensity = isMobile ? 0.2 : 0.26
+  const bloomSamples = isMobile ? 0 : 2
   const fogArgs = mode === 'full' ? null : ['#f6f6f2', 6, 12]
   const invalidateRef = useRef(null)
   const requestFrame = useCallback(() => {
@@ -274,7 +275,7 @@ export function ThreeScene({ className, onModelsReady }) {
         shadows={mode === 'full'}
         frameloop="demand"
         dpr={dpr}
-        gl={{ antialias, alpha: true, powerPreference }}
+        gl={{ antialias, alpha: true, powerPreference, precision: isMobile ? 'mediump' : 'highp' }}
         camera={{ position: [0, 0.35, isNarrowMobile ? 5.45 : isMobile ? 5.65 : 6], fov: 32 }}
         events={null}
         style={{ pointerEvents: 'none', touchAction: 'pan-y', overflow: 'visible' }}
@@ -302,7 +303,7 @@ export function ThreeScene({ className, onModelsReady }) {
           </Suspense>
         </SceneRig>
         {enablePlasmaBloom ? (
-          <EffectComposer multisampling={isMobile ? 2 : 4} enableNormalPass={false}>
+          <EffectComposer multisampling={bloomSamples} enableNormalPass={false}>
             <Bloom
               intensity={bloomIntensity}
               luminanceThreshold={1}
@@ -311,7 +312,6 @@ export function ThreeScene({ className, onModelsReady }) {
             />
           </EffectComposer>
         ) : null}
-        <ContactShadows position={[0, -1.2, 0]} opacity={0.28 + intensity * 0.15} scale={6} blur={2} far={4} />
       </Canvas>
     </div>
   )
